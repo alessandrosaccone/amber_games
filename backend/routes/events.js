@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: { fileSize: 50 * 1024 * 1024 } // 50MB limite
 });
@@ -46,9 +46,15 @@ router.get('/types', async (req, res) => {
 router.get('/pending', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT e.*, et.name as event_type_name, et.points as event_points
+      SELECT e.*, 
+             et.name as event_type_name, 
+             et.points as event_points,
+             pn1.avatar_url as person_avatar,
+             pn2.avatar_url as declarer_avatar
       FROM events e
       JOIN event_types et ON e.event_type_id = et.id
+      LEFT JOIN predefined_names pn1 ON e.person_name = pn1.name
+      LEFT JOIN predefined_names pn2 ON e.declarer_name = pn2.name
       WHERE e.status = 'pending'
       ORDER BY e.created_at DESC
     `);
@@ -62,15 +68,15 @@ router.get('/pending', async (req, res) => {
 // POST nuovo evento
 router.post('/', upload.single('media'), async (req, res) => {
   const { person_name, event_type_id, declarer_name, description } = req.body;
-  
+
   try {
     let mediaPath = null;
     let mediaType = null;
-    
+
     if (req.file) {
       mediaPath = req.file.filename;
       const ext = path.extname(req.file.originalname).toLowerCase();
-      
+
       if (['.jpg', '.jpeg', '.png', '.gif'].includes(ext)) {
         mediaType = 'photo';
       } else if (['.mp4', '.avi', '.mov'].includes(ext)) {
@@ -79,13 +85,13 @@ router.post('/', upload.single('media'), async (req, res) => {
         mediaType = 'audio';
       }
     }
-    
+
     const result = await pool.query(
       `INSERT INTO events (person_name, event_type_id, declarer_name, description, media_path, media_type)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
       [person_name, event_type_id, declarer_name, description, mediaPath, mediaType]
     );
-    
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -97,16 +103,22 @@ router.post('/', upload.single('media'), async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT e.*, et.name as event_type_name, et.points as event_points
+      SELECT e.*, 
+             et.name as event_type_name, 
+             et.points as event_points,
+             pn1.avatar_url as person_avatar,
+             pn2.avatar_url as declarer_avatar
       FROM events e
       JOIN event_types et ON e.event_type_id = et.id
+      LEFT JOIN predefined_names pn1 ON e.person_name = pn1.name
+      LEFT JOIN predefined_names pn2 ON e.declarer_name = pn2.name
       WHERE e.id = $1
     `, [req.params.id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Evento non trovato' });
     }
-    
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);

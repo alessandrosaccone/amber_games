@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../config';
 
 function InsertEvent() {
   const navigate = useNavigate();
@@ -24,8 +25,8 @@ function InsertEvent() {
   const loadData = async () => {
     try {
       const [namesRes, typesRes] = await Promise.all([
-        axios.get('/api/events/names'),
-        axios.get('/api/events/types')
+        axios.get(`${API_BASE_URL}/api/events/names`),
+        axios.get(`${API_BASE_URL}/api/events/types`)
       ]);
       setNames(namesRes.data);
       setEventTypes(typesRes.data);
@@ -63,7 +64,7 @@ function InsertEvent() {
     }
 
     try {
-      await axios.post('/api/events', data, {
+      await axios.post(`${API_BASE_URL}/api/events`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setMessage({ type: 'success', text: 'Evento inserito con successo!' });
@@ -100,17 +101,27 @@ function InsertEvent() {
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Persona coinvolta</label>
-              <select
-                name="person_name"
-                value={formData.person_name}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Seleziona</option>
-                {names.map(name => (
-                  <option key={name.id} value={name.name}>{name.name}</option>
-                ))}
-              </select>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <select
+                  name="person_name"
+                  value={formData.person_name}
+                  onChange={handleInputChange}
+                  required
+                  style={{ flex: 1 }}
+                >
+                  <option value="">Seleziona</option>
+                  {names.map(name => (
+                    <option key={name.id} value={name.name}>{name.name}</option>
+                  ))}
+                </select>
+                {formData.person_name && names.find(n => n.name === formData.person_name)?.avatar_url && (
+                  <img
+                    src={names.find(n => n.name === formData.person_name).avatar_url}
+                    alt="Avatar"
+                    style={{ width: '60px', height: '60px' }}
+                  />
+                )}
+              </div>
             </div>
 
             <div className="form-group">
@@ -132,17 +143,27 @@ function InsertEvent() {
 
             <div className="form-group">
               <label>Dichiarante</label>
-              <select
-                name="declarer_name"
-                value={formData.declarer_name}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Chi sei?</option>
-                {names.map(name => (
-                  <option key={name.id} value={name.name}>{name.name}</option>
-                ))}
-              </select>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <select
+                  name="declarer_name"
+                  value={formData.declarer_name}
+                  onChange={handleInputChange}
+                  required
+                  style={{ flex: 1 }}
+                >
+                  <option value="">Chi sei?</option>
+                  {names.map(name => (
+                    <option key={name.id} value={name.name}>{name.name}</option>
+                  ))}
+                </select>
+                {formData.declarer_name && names.find(n => n.name === formData.declarer_name)?.avatar_url && (
+                  <img
+                    src={names.find(n => n.name === formData.declarer_name).avatar_url}
+                    alt="Avatar"
+                    style={{ width: '60px', height: '60px' }}
+                  />
+                )}
+              </div>
             </div>
 
             <div className="form-group">
@@ -164,7 +185,7 @@ function InsertEvent() {
                 className="file-input"
               />
               {fileName && (
-                <p style={{marginTop: '6px', color: '#8ac5ff', fontSize: '0.8rem'}}>
+                <p style={{ marginTop: '6px', color: '#8ac5ff', fontSize: '0.8rem' }}>
                   {fileName}
                 </p>
               )}

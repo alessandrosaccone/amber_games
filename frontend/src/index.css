@@ -18,3 +18,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Global Avatar Style */
+img[alt*="Avatar"],
+.avatar-podium,
+.avatar-list {
+  object-fit: contain;
+  /* Show full image */
+  background-color: transparent;
+  border-radius: 12px !important;
+  /* Rounded rectangle */
+  padding: 4px;
+  /* Optional: small padding inside container */
+}
