@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
+const pool = require('./config/db');
 const eventsRouter = require('./routes/events');
 const verificationsRouter = require('./routes/verifications');
 const leaderboardRouter = require('./routes/leaderboard');
@@ -10,9 +12,33 @@ const leaderboardRouter = require('./routes/leaderboard');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Funzione per inizializzare il DB se vuoto (utile per Render Free senza Shell)
+async function initDatabase() {
+  try {
+    const res = await pool.query("SELECT to_regclass('public.predefined_names')");
+    if (!res.rows[0].to_regclass) {
+      console.log('Database tables not found. Initializing...');
+      const sqlPath = path.join(__dirname, 'models/init.sql');
+      const sql = fs.readFileSync(sqlPath, 'utf8');
+
+      const cleanSql = sql.replace(/--.*$/gm, '');
+      const statements = cleanSql.split(';').map(s => s.trim()).filter(s => s.length > 0);
+
+      for (const statement of statements) {
+        await pool.query(statement);
+      }
+      console.log('Database initialized successfully!');
+    } else {
+      console.log('Database already initialized.');
+    }
+  } catch (err) {
+    console.error('Error during DB initialization:', err);
+  }
+}
+
 // Middleware
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: '*', // Per debug su Render, poi restringere se necessario
   credentials: true
 };
 app.use(cors(corsOptions));
@@ -24,11 +50,19 @@ app.use('/api/events', eventsRouter);
 app.use('/api/verifications', verificationsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 
-// Health check
+// Root route per Health Check e Debug
 app.get('/', (req, res) => {
-  res.json({ message: 'Event Verification API is running' });
+  res.status(200).json({
+    status: 'online',
+    message: 'Event Verification API is running',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
+  });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Avvio server dopo check DB
+initDatabase().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
