@@ -19,6 +19,22 @@ services:
         sync: false
     healthCheckPath: /
 
+  # Frontend Static Site
+  - type: static
+    name: amber-games-frontend
+    region: frankfurt
+    plan: free
+    branch: avatar
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishDir: build
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: amber-games-backend
+          property: host
+
 databases:
   # PostgreSQL Database
   - name: amber-games-db
