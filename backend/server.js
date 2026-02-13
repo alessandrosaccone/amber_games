@@ -8,6 +8,9 @@ const pool = require('./config/db');
 const eventsRouter = require('./routes/events');
 const verificationsRouter = require('./routes/verifications');
 const leaderboardRouter = require('./routes/leaderboard');
+const adminRouter = require('./routes/admin'); 
+const { startKeepAliveJob } = require('./jobs/keepAlive'); 
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -49,6 +52,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/events', eventsRouter);
 app.use('/api/verifications', verificationsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/admin', adminRouter); 
 
 // Root route per Health Check e Debug
 app.get('/', (req, res) => {
@@ -60,8 +64,11 @@ app.get('/', (req, res) => {
   });
 });
 
+  
 // Avvio server dopo check DB
 initDatabase().then(() => {
+  startKeepAliveJob(); // ⭐ AGGIUNGI QUESTA RIGA
+
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
