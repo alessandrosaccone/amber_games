@@ -46,7 +46,7 @@ function Leaderboard() {
               <div className="podium-position second">
                 2°
               </div>
-              {topThree[1].avatar_url && <img src={topThree[1].avatar_url} alt={topThree[1].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
+              {topThree[1].avatar_url && <img src={topThree[1].avatar_url} alt={topThree[1].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[1].user_name}</div>
               <div className="podium-points">{topThree[1].total_points} pt</div>
             </div>
@@ -57,7 +57,7 @@ function Leaderboard() {
               <div className="podium-position first">
                 1°
               </div>
-              {topThree[0].avatar_url && <img src={topThree[0].avatar_url} alt={topThree[0].user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block' }} />}
+              {topThree[0].avatar_url && <img src={topThree[0].avatar_url} alt={topThree[0].user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[0].user_name}</div>
               <div className="podium-points">{topThree[0].total_points} pt</div>
             </div>
@@ -68,7 +68,7 @@ function Leaderboard() {
               <div className="podium-position third">
                 3°
               </div>
-              {topThree[2].avatar_url && <img src={topThree[2].avatar_url} alt={topThree[2].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
+              {topThree[2].avatar_url && <img src={topThree[2].avatar_url} alt={topThree[2].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[2].user_name}</div>
               <div className="podium-points">{topThree[2].total_points} pt</div>
             </div>
@@ -83,7 +83,7 @@ function Leaderboard() {
             <div key={score.id} className="leaderboard-item">
               <span className="leaderboard-rank">{index + 4}°</span>
               <div className="leaderboard-user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-                {score.avatar_url && <img src={score.avatar_url} alt={score.user_name} className="avatar-list" style={{ width: '60px', height: '60px' }} />}
+                {score.avatar_url && <img src={score.avatar_url} alt={score.user_name} className="avatar-list" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }} />}
                 <span className="leaderboard-name">{score.user_name}</span>
               </div>
               <span className="leaderboard-points">{score.total_points} pt</span>
