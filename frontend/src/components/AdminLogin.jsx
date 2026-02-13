@@ -14,17 +14,17 @@ function AdminLogin() {
   setError('');
 
   try {
-    console.log('Chiamata API con password:', password); // ← AGGIUNGI
+    console.log('Chiamata API con password:', password); 
     const response = await axios.post('/api/admin/login', { password });
-    console.log('Risposta ricevuta:', response.data); // ← AGGIUNGI
+    console.log('Risposta ricevuta:', response.data); 
     
     if (response.data.success) {
       sessionStorage.setItem('adminAuth', 'true');
       navigate('/admin');
     }
   } catch (error) {
-    console.error('Errore completo:', error); // ← AGGIUNGI
-    console.error('Response error:', error.response); // ← AGGIUNGI
+    console.error('Errore completo:', error); 
+    console.error('Response error:', error.response); 
     setError(error.response?.data?.message || 'Password errata');
   } finally {
     setLoading(false);
