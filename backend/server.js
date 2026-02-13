@@ -6,6 +6,8 @@ require('dotenv').config();
 const eventsRouter = require('./routes/events');
 const verificationsRouter = require('./routes/verifications');
 const leaderboardRouter = require('./routes/leaderboard');
+const { startKeepAliveJob } = require('./jobs/keepAlive'); 
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,11 +25,15 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/events', eventsRouter);
 app.use('/api/verifications', verificationsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/admin', adminRouter);
 
 // Health check
 app.get('/', (req, res) => {
   res.json({ message: 'Event Verification API is running' });
 });
+
+// Start keep-alive job
+startKeepAliveJob();
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

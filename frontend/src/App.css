@@ -657,4 +657,28 @@ select option {
   .third {
     height: 50px;
   }
+  /* Admin Tabs */
+  .admin-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .admin-tabs button {
+    flex: 1;
+    min-width: 100px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #c0c0d8;
+    font-size: 0.9rem;
+  }
+
+  .admin-tabs button.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+  }
 }
