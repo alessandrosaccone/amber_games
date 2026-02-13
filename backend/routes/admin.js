@@ -88,7 +88,7 @@ router.delete('/event-types/:id', async (req, res) => {
 // POST - Aggiungi persona con avatar
 router.post('/people', upload.single('avatar'), async (req, res) => {
   const { name } = req.body;
-  avatarPath = req.file ? req.file.filename : null;
+  let avatarPath = req.file ? req.file.filename : null;
   avatarPath = avatarPath ? `/avatars/${avatarPath}` : null;
   
   const client = await pool.connect();
