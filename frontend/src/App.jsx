@@ -4,7 +4,10 @@ import Home from './components/Home';
 import InsertEvent from './components/InsertEvent';
 import VerifyEvent from './components/VerifyEvent';
 import Leaderboard from './components/Leaderboard';
+import AdminLogin from './components/AdminLogin';
+import AdminPanel from './components/AdminPanel';
 import './App.css';
+
 
 function App() {
   return (
@@ -15,6 +18,8 @@ function App() {
           <Route path="/insert" element={<InsertEvent />} />
           <Route path="/verify" element={<VerifyEvent />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </div>
     </Router>

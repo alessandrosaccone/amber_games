@@ -6,6 +6,30 @@ function Home() {
 
   return (
     <div className="container">
+      {/* Icona Admin */}
+      <div style={{ 
+        position: 'fixed', 
+        top: '20px', 
+        right: '20px',
+        zIndex: 1000
+      }}>
+        <button 
+          onClick={() => navigate('/admin-login')}
+          style={{
+            width: '50px',
+            height: '50px',
+            borderRadius: '50%',
+            padding: '0',
+            fontSize: '1.5rem',
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '2px solid rgba(255, 255, 255, 0.2)',
+            cursor: 'pointer'
+          }}
+        >
+          ⚙️
+        </button>
+      </div>
+
       <div className="home-header">
         <h1>Eventi & Verifiche</h1>
         <p className="subtitle">Sistema di verifica eventi con classifica</p>
