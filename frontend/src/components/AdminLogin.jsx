@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import config from '../config';
-
+import API_BASE_URL from '../config';  // ⭐
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -11,27 +10,23 @@ function AdminLogin() {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-  try {
-    console.log('Chiamata API con password:', password); 
-    const response = await axios.post(`https://triumvitavolo.onrender.com/api/admin/login`, { password });
-    console.log('Risposta ricevuta:', response.data); 
-    
-    if (response.data.success) {
-      sessionStorage.setItem('adminAuth', 'true');
-      navigate('/admin');
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/admin/login`, { password });
+      
+      if (response.data.success) {
+        sessionStorage.setItem('adminAuth', 'true');
+        navigate('/admin');
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'Password errata');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Errore completo:', error); 
-    console.error('Response error:', error.response); 
-    setError(error.response?.data?.message || 'Password errata');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="container">
