@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import config from '../config';
+
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ function AdminLogin() {
 
   try {
     console.log('Chiamata API con password:', password); 
-    const response = await axios.post('/api/admin/login', { password });
+    const response = await axios.post(`https://triumvitavolo.onrender.com/api/admin/login`, { password });
     console.log('Risposta ricevuta:', response.data); 
     
     if (response.data.success) {
