@@ -43,73 +43,58 @@ function Leaderboard() {
   }
 
   const rankedScores = getRankedScores(scores);
-  const topThree = rankedScores.filter(s => s.rank <= 3);
-
-  // Per il podio, cerchiamo esattamente chi ha rank 1, 2 e 3 (anche se multipli)
-  const firstPlace = rankedScores.filter(s => s.rank === 1);
-  const secondPlace = rankedScores.filter(s => s.rank === 2);
-  const thirdPlace = rankedScores.filter(s => s.rank === 3);
-
-  const restSize = rankedScores.length > 3 ? rankedScores.slice(3) : [];
+  const topThree = rankedScores.slice(0, 3);
+  const rest = rankedScores.slice(3);
 
   return (
     <div className="container">
       <h1>Classifica</h1>
       <p className="subtitle">I migliori giocatori in classifica</p>
 
-      {rankedScores.length > 0 && (
-        <div className="podium-wrapper">
-          {/* Visualizzazione speciale per i primi 3 ranghi */}
-          <div className="podium">
-            {/* Secondo Rango */}
-            {secondPlace.length > 0 && (
-              <div className="podium-group">
-                {secondPlace.map(user => (
-                  <div key={user.id} className="podium-place">
-                    <div className="podium-position second">2°</div>
-                    {user.avatar_url && <img src={user.avatar_url} alt={user.user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
-                    <div className="podium-name">{user.user_name}</div>
-                    <div className="podium-points">{user.total_points} pt</div>
-                  </div>
-                ))}
+      {topThree.length > 0 && (
+        <div className="podium">
+          {/* Secondo Posto */}
+          {topThree[1] && (
+            <div className="podium-place">
+              <div className="podium-position second">
+                {topThree[1].rank}°
               </div>
-            )}
+              {topThree[1].avatar_url && <img src={topThree[1].avatar_url} alt={topThree[1].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
+              <div className="podium-name">{topThree[1].user_name}</div>
+              <div className="podium-points">{topThree[1].total_points} pt</div>
+            </div>
+          )}
 
-            {/* Primo Rango */}
-            {firstPlace.length > 0 && (
-              <div className="podium-group">
-                {firstPlace.map(user => (
-                  <div key={user.id} className="podium-place">
-                    <div className="podium-position first">1°</div>
-                    {user.avatar_url && <img src={user.avatar_url} alt={user.user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block' }} />}
-                    <div className="podium-name">{user.user_name}</div>
-                    <div className="podium-points">{user.total_points} pt</div>
-                  </div>
-                ))}
+          {/* Primo Posto */}
+          {topThree[0] && (
+            <div className="podium-place">
+              <div className="podium-position first">
+                {topThree[0].rank}°
               </div>
-            )}
+              {topThree[0].avatar_url && <img src={topThree[0].avatar_url} alt={topThree[0].user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block' }} />}
+              <div className="podium-name">{topThree[0].user_name}</div>
+              <div className="podium-points">{topThree[0].total_points} pt</div>
+            </div>
+          )}
 
-            {/* Terzo Rango */}
-            {thirdPlace.length > 0 && (
-              <div className="podium-group">
-                {thirdPlace.map(user => (
-                  <div key={user.id} className="podium-place">
-                    <div className="podium-position third">3°</div>
-                    {user.avatar_url && <img src={user.avatar_url} alt={user.user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
-                    <div className="podium-name">{user.user_name}</div>
-                    <div className="podium-points">{user.total_points} pt</div>
-                  </div>
-                ))}
+          {/* Terzo Posto */}
+          {topThree[2] && (
+            <div className="podium-place">
+              <div className="podium-position third">
+                {topThree[2].rank}°
               </div>
-            )}
-          </div>
+              {topThree[2].avatar_url && <img src={topThree[2].avatar_url} alt={topThree[2].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
+              <div className="podium-name">{topThree[2].user_name}</div>
+              <div className="podium-points">{topThree[2].total_points} pt</div>
+            </div>
+          )}
         </div>
       )}
 
-      {rankedScores.length > 3 && (
+      {rest.length > 0 && (
         <div className="leaderboard-list">
           <h2>Tutta la classifica</h2>
-          {rankedScores.map((score) => (
+          {rest.map((score) => (
             <div key={score.id} className="leaderboard-item">
               <span className="leaderboard-rank">{score.rank}°</span>
               <div className="leaderboard-user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
