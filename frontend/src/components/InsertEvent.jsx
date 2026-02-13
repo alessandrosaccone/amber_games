@@ -118,7 +118,7 @@ function InsertEvent() {
                   <img
                     src={names.find(n => n.name === formData.person_name).avatar_url}
                     alt="Avatar"
-                    style={{ width: '60px', height: '60px' }}
+                    style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }}
                   />
                 )}
               </div>
@@ -160,7 +160,7 @@ function InsertEvent() {
                   <img
                     src={names.find(n => n.name === formData.declarer_name).avatar_url}
                     alt="Avatar"
-                    style={{ width: '60px', height: '60px' }}
+                    style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }}
                   />
                 )}
               </div>
