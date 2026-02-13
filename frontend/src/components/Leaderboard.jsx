@@ -23,6 +23,17 @@ function Leaderboard() {
     }
   };
 
+  // Funzione per calcolare i ranghi con gestione pareggi (Standard Competition Ranking)
+  const getRankedScores = (data) => {
+    let currentRank = 1;
+    return data.map((score, index) => {
+      if (index > 0 && score.total_points < data[index - 1].total_points) {
+        currentRank = index + 1;
+      }
+      return { ...score, rank: currentRank };
+    });
+  };
+
   if (loading) {
     return (
       <div className="container">
@@ -31,57 +42,76 @@ function Leaderboard() {
     );
   }
 
-  const topThree = scores.slice(0, 3);
-  const rest = scores.slice(3);
+  const rankedScores = getRankedScores(scores);
+  const topThree = rankedScores.filter(s => s.rank <= 3);
+
+  // Per il podio, cerchiamo esattamente chi ha rank 1, 2 e 3 (anche se multipli)
+  const firstPlace = rankedScores.filter(s => s.rank === 1);
+  const secondPlace = rankedScores.filter(s => s.rank === 2);
+  const thirdPlace = rankedScores.filter(s => s.rank === 3);
+
+  const restSize = rankedScores.length > 3 ? rankedScores.slice(3) : [];
 
   return (
     <div className="container">
       <h1>Classifica</h1>
       <p className="subtitle">I migliori giocatori in classifica</p>
 
-      {topThree.length > 0 && (
-        <div className="podium">
-          {topThree[1] && (
-            <div className="podium-place">
-              <div className="podium-position second">
-                2°
+      {rankedScores.length > 0 && (
+        <div className="podium-wrapper">
+          {/* Visualizzazione speciale per i primi 3 ranghi */}
+          <div className="podium">
+            {/* Secondo Rango */}
+            {secondPlace.length > 0 && (
+              <div className="podium-group">
+                {secondPlace.map(user => (
+                  <div key={user.id} className="podium-place">
+                    <div className="podium-position second">2°</div>
+                    {user.avatar_url && <img src={user.avatar_url} alt={user.user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
+                    <div className="podium-name">{user.user_name}</div>
+                    <div className="podium-points">{user.total_points} pt</div>
+                  </div>
+                ))}
               </div>
-              {topThree[1].avatar_url && <img src={topThree[1].avatar_url} alt={topThree[1].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
-              <div className="podium-name">{topThree[1].user_name}</div>
-              <div className="podium-points">{topThree[1].total_points} pt</div>
-            </div>
-          )}
+            )}
 
-          {topThree[0] && (
-            <div className="podium-place">
-              <div className="podium-position first">
-                1°
+            {/* Primo Rango */}
+            {firstPlace.length > 0 && (
+              <div className="podium-group">
+                {firstPlace.map(user => (
+                  <div key={user.id} className="podium-place">
+                    <div className="podium-position first">1°</div>
+                    {user.avatar_url && <img src={user.avatar_url} alt={user.user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block' }} />}
+                    <div className="podium-name">{user.user_name}</div>
+                    <div className="podium-points">{user.total_points} pt</div>
+                  </div>
+                ))}
               </div>
-              {topThree[0].avatar_url && <img src={topThree[0].avatar_url} alt={topThree[0].user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block' }} />}
-              <div className="podium-name">{topThree[0].user_name}</div>
-              <div className="podium-points">{topThree[0].total_points} pt</div>
-            </div>
-          )}
+            )}
 
-          {topThree[2] && (
-            <div className="podium-place">
-              <div className="podium-position third">
-                3°
+            {/* Terzo Rango */}
+            {thirdPlace.length > 0 && (
+              <div className="podium-group">
+                {thirdPlace.map(user => (
+                  <div key={user.id} className="podium-place">
+                    <div className="podium-position third">3°</div>
+                    {user.avatar_url && <img src={user.avatar_url} alt={user.user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
+                    <div className="podium-name">{user.user_name}</div>
+                    <div className="podium-points">{user.total_points} pt</div>
+                  </div>
+                ))}
               </div>
-              {topThree[2].avatar_url && <img src={topThree[2].avatar_url} alt={topThree[2].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block' }} />}
-              <div className="podium-name">{topThree[2].user_name}</div>
-              <div className="podium-points">{topThree[2].total_points} pt</div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
-      {rest.length > 0 && (
+      {rankedScores.length > 3 && (
         <div className="leaderboard-list">
-          <h2>Classifica completa</h2>
-          {rest.map((score, index) => (
+          <h2>Tutta la classifica</h2>
+          {rankedScores.map((score) => (
             <div key={score.id} className="leaderboard-item">
-              <span className="leaderboard-rank">{index + 4}°</span>
+              <span className="leaderboard-rank">{score.rank}°</span>
               <div className="leaderboard-user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
                 {score.avatar_url && <img src={score.avatar_url} alt={score.user_name} className="avatar-list" style={{ width: '60px', height: '60px' }} />}
                 <span className="leaderboard-name">{score.user_name}</span>
