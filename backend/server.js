@@ -48,23 +48,32 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+// API Routes
 app.use('/api/events', eventsRouter);
 app.use('/api/verifications', verificationsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/admin', adminRouter); 
 
 // Root route per Health Check e Debug
-app.get('/', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'online',
-    message: 'Event Verification API is running',
+    message: 'Amber Games API is running',
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development'
   });
 });
 
   
+// Catch-all route for SPA: any request that doesn't match an API route
+// should return the React app's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+});
+
 // Avvio server dopo check DB
 initDatabase().then(() => {
   startKeepAliveJob(); // ⭐ AGGIUNGI QUESTA RIGA

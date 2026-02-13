@@ -7,13 +7,13 @@ function Home() {
   return (
     <div className="container">
       {/* Icona Admin */}
-      <div style={{ 
-        position: 'fixed', 
-        top: '20px', 
+      <div style={{
+        position: 'fixed',
+        top: '20px',
         right: '20px',
         zIndex: 1000
       }}>
-        <button 
+        <button
           onClick={() => navigate('/admin-login')}
           style={{
             width: '50px',
@@ -31,8 +31,8 @@ function Home() {
       </div>
 
       <div className="home-header">
-        <h1>Eventi & Verifiche</h1>
-        <p className="subtitle">Sistema di verifica eventi con classifica</p>
+        <h1>Amber Games</h1>
+        <p className="subtitle">Eventi, Verifiche e Classifica</p>
       </div>
 
       <div className="home-buttons">
