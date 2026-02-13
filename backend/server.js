@@ -57,7 +57,7 @@ app.use('/api/leaderboard', leaderboardRouter);
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'online',
-    message: 'Event Verification API is running',
+    message: 'Amber Games API is running',
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development'
   });

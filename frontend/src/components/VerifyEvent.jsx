@@ -86,7 +86,7 @@ function VerifyEvent() {
 
   return (
     <div className="container">
-      <h1>Verifica Eventi</h1>
+      <h1>Amber Games - Verifica</h1>
       <p className="subtitle">Conferma o rifiuta (+2 pt)</p>
 
       {message && (
