@@ -3,7 +3,8 @@
 -- Tabella per i nomi predefiniti
 CREATE TABLE predefined_names (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE
+    name VARCHAR(100) NOT NULL UNIQUE,
+    avatar_url VARCHAR(255)
 );
 
 -- Tabella per i tipi di evento (con punti hardcoded)
@@ -46,13 +47,23 @@ CREATE TABLE scores (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Inserisci alcuni nomi predefiniti di esempio
-INSERT INTO predefined_names (name) VALUES 
-    ('Mario Rossi'),
-    ('Luigi Bianchi'),
-    ('Anna Verdi'),
-    ('Marco Neri'),
-    ('Giulia Gialli');
+
+INSERT INTO predefined_names (name, avatar_url) VALUES 
+    ('FraPall8', '/avatars/frapall8.png'),
+    ('Angy 18', '/avatars/angy18.png'),
+    ('piercy', '/avatars/piercy.png'),
+    ('Don KEO', '/avatars/KEO.png'),
+    ('Hambridge', '/avatars/hambridge.png'),
+    ('Mike', '/avatars/mike.png'),
+    ('La Regina (Marins)', '/avatars/marins.png'),
+    ('Lara DS', '/avatars/laraDS.png'),
+    ('Bera', '/avatars/bera.png'),
+    ('Giulia Bera', '/avatars/giuliabera.png'),
+    ('Giulia R', '/avatars/giuliar.png'),
+    ('Palumbs', '/avatars/palumbs.png'),
+    ('Ale Calda Calda', '/avatars/alecaldacalda.png'),
+    ('Bello e Intelligente (alle)', '/avatars/alle.png'),
+    ('Bello e Intelligente (anto)', '/avatars/anto.png');
 
 -- Inserisci tipi di evento con punti
 INSERT INTO event_types (name, points) VALUES 
