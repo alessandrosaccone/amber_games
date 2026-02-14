@@ -1,13 +1,14 @@
 services:
-  # Backend Web Service
+  # Monolithic Service (Backend + Frontend)
   - type: web
-    name: amber-games-backend
+    name: amber-games-monolith
     runtime: node
     region: frankfurt
     plan: free
     branch: avatar
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    rootDir: .
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: PORT
         value: 5000
@@ -15,30 +16,9 @@ services:
         fromDatabase:
           name: amber-games-db
           property: connectionString
-      - key: FRONTEND_URL
-        sync: false
-    healthCheckPath: /
-
-  # Frontend Static Site
-# Frontend Static Site
-  - type: static
-    name: triumvitavolo
-    region: frankfurt
-    plan: free
-    branch: avatar
-    rootDir: frontend
-    buildCommand: npm ci && npm run build
-    publishDir: build
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
       - key: REACT_APP_API_URL
-        fromService:
-          type: web
-          name: amber-games-backend
-          property: host
+        value: /api
+    healthCheckPath: /api/health
 
 databases:
   # PostgreSQL Database
@@ -47,3 +27,5 @@ databases:
     user: amber_user
     region: frankfurt
     plan: free
+
+    # ciao
