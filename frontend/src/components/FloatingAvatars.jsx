@@ -72,9 +72,14 @@ function FloatingAvatars() {
       // Costruisci URL corretto
       let avatarUrl = person.avatar_url;
 
-      if (!avatarUrl.startsWith('http')) {
+      // Se l'URL inizia con /avatars/, è un asset statico del frontend (in public/avatars).
+      // In questo caso NON dobbiamo aggiungere l'URL del backend, perché in locale
+      // viene servito dal frontend (porta 3000).
+      const isStaticAsset = avatarUrl.startsWith('/avatars/') || avatarUrl.startsWith('avatars/');
+
+      if (!avatarUrl.startsWith('http') && !isStaticAsset) {
         // In locale (localhost), frontend e backend sono su porte diverse (3000 vs 5000).
-        // Quindi dobbiamo aggiungere l'URL del backend.
+        // Quindi dobbiamo aggiungere l'URL del backend per gli upload.
         if (API_BASE_URL.includes('localhost')) {
           avatarUrl = `${API_BASE_URL}${avatarUrl.startsWith('/') ? '' : '/'}${avatarUrl}`;
         } else {
