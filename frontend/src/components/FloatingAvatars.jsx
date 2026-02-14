@@ -29,7 +29,7 @@ function FloatingAvatars() {
 
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext('2d');
 
     // Imposta dimensioni canvas
@@ -58,22 +58,22 @@ function FloatingAvatars() {
     avatars.forEach((person) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
-      
+
       img.onload = () => {
         validImages.push({ img, person });
         checkAllLoaded();
       };
-      
+
       img.onerror = () => {
         console.warn(`Impossibile caricare avatar: ${person.avatar_url}`);
         checkAllLoaded();
       };
-      
+
       // Costruisci URL corretto
-      const avatarUrl = person.avatar_url.startsWith('http') 
-        ? person.avatar_url 
-        : `${API}${person.avatar_url}`;
-      
+      const avatarUrl = person.avatar_url.startsWith('http')
+        ? person.avatar_url
+        : `${person.avatar_url}`;
+
       img.src = avatarUrl;
     });
 
@@ -99,7 +99,7 @@ function FloatingAvatars() {
       animate();
     };
 
-    
+
     // Animazione
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
