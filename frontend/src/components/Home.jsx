@@ -1,11 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import FloatingAvatars from './FloatingAvatars'; 
 
 function Home() {
   const navigate = useNavigate();
 
   return (
     <div className="container">
+      <FloatingAvatars />
       {/* Icona Admin */}
       <div style={{
         position: 'fixed',
