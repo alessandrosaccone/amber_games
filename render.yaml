@@ -21,12 +21,12 @@ services:
 
   # Frontend Static Site
   - type: static
-    name: amber-games-frontend
+    name: triumvitavolo
     region: frankfurt
     plan: free
     branch: avatar
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    buildCommand: npm ci && npm run build
     publishDir: build
     envVars:
       - key: REACT_APP_API_URL
