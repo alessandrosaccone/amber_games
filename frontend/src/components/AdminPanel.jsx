@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_BASE_URL from '../config'; 
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -27,9 +28,9 @@ function AdminPanel() {
   const loadData = async () => {
     try {
       const [typesRes, eventsRes, peopleRes] = await Promise.all([
-        axios.get('/api/events/types'),
-        axios.get('/api/admin/events'),
-        axios.get('/api/admin/people')
+        axios.get(`${API_BASE_URL}/api/events/types`),
+        axios.get(`${API_BASE_URL}/api/admin/events`),
+        axios.get(`${API_BASE_URL}/api/admin/people`)
       ]);
       setEventTypes(typesRes.data);
       setEvents(eventsRes.data);
@@ -50,7 +51,7 @@ function AdminPanel() {
     setMessage(null);
 
     try {
-      await axios.post('/api/admin/event-types', newEventType);
+      await axios.post(`${API_BASE_URL}/api/admin/event-types`, newEventType);
       setMessage({ type: 'success', text: 'Tipo evento aggiunto!' });
       setNewEventType({ name: '', points: '' });
       loadData();
@@ -65,7 +66,7 @@ function AdminPanel() {
     if (!window.confirm('Sei sicuro di voler eliminare questo tipo di evento?')) return;
 
     try {
-      await axios.delete(`/api/admin/event-types/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/admin/event-types/${id}`);
       setMessage({ type: 'success', text: 'Tipo evento eliminato!' });
       loadData();
     } catch (error) {
@@ -85,7 +86,7 @@ function AdminPanel() {
     }
 
     try {
-      await axios.post('/api/admin/people', formData, {
+      await axios.post(`${API_BASE_URL}/api/admin/people`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setMessage({ type: 'success', text: 'Persona aggiunta!' });
@@ -102,7 +103,7 @@ function AdminPanel() {
     if (!window.confirm('Sei sicuro? Questo eliminerà anche i suoi punteggi.')) return;
 
     try {
-      await axios.delete(`/api/admin/people/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/admin/people/${id}`);
       setMessage({ type: 'success', text: 'Persona eliminata!' });
       loadData();
     } catch (error) {
@@ -114,7 +115,7 @@ function AdminPanel() {
     if (!window.confirm('Sei sicuro di voler eliminare questo evento?')) return;
 
     try {
-      await axios.delete(`/api/admin/events/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/admin/events/${id}`);
       setMessage({ type: 'success', text: 'Evento eliminato!' });
       loadData();
     } catch (error) {
@@ -134,7 +135,7 @@ function AdminPanel() {
     if (!doubleConfirm) return;
 
     try {
-      await axios.delete('/api/admin/reset-all');
+      await axios.delete(`${API_BASE_URL}/api/admin/reset-all`);
       setMessage({ type: 'success', text: 'Database resettato!' });
       loadData();
     } catch (error) {

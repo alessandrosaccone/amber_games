@@ -11,7 +11,7 @@ const keepDatabaseAlive = async () => {
 
 const startKeepAliveJob = () => {
   // 10 minuti = 600000 millisecondi
-  setInterval(keepDatabaseAlive, 10 * 60 * 1000);
+  setInterval(keepDatabaseAlive, 60 * 1000);
   
   console.log('Keep-alive job started: runs every 10 minutes');
   

@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 
+
 const pool = require('./config/db');
 const eventsRouter = require('./routes/events');
 const verificationsRouter = require('./routes/verifications');
@@ -44,7 +45,7 @@ const corsOptions = {
   origin: '*', // Per debug su Render, poi restringere se necessario
   credentials: true
 };
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); 
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

@@ -161,6 +161,7 @@ router.delete('/people/:id', async (req, res) => {
 });
 
 // DELETE - Elimina evento specifico
+// DELETE - Elimina evento specifico E rimuovi punti
 router.delete('/events/:id', async (req, res) => {
   const { id } = req.params;
   
@@ -169,15 +170,66 @@ router.delete('/events/:id', async (req, res) => {
   try {
     await client.query('BEGIN');
     
-    // Elimina verifiche associate
+    // 1. Recupera informazioni evento
+    const eventResult = await client.query(`
+      SELECT e.*, et.points as event_points
+      FROM events e
+      JOIN event_types et ON e.event_type_id = et.id
+      WHERE e.id = $1
+    `, [id]);
+    
+    if (eventResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Evento non trovato' });
+    }
+    
+    const event = eventResult.rows[0];
+    
+    // 2. Se l'evento è CONFERMATO, rimuovi punti
+    if (event.status === 'confirmed') {
+      // Rimuovi punti dalla persona dell'evento
+      await client.query(
+        'UPDATE scores SET total_points = total_points - $1, updated_at = CURRENT_TIMESTAMP WHERE user_name = $2',
+        [event.event_points, event.person_name]
+      );
+      
+      // Rimuovi 5 punti dal dichiarante
+      await client.query(
+        'UPDATE scores SET total_points = total_points - 5, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
+        [event.declarer_name]
+      );
+    }
+    
+    // 3. Rimuovi 2 punti da TUTTI i verificatori (anche se evento non confermato)
+    const verifiers = await client.query(
+      'SELECT DISTINCT verifier_name FROM verifications WHERE event_id = $1',
+      [id]
+    );
+    
+    for (const verifier of verifiers.rows) {
+      await client.query(
+        'UPDATE scores SET total_points = total_points - 2, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
+        [verifier.verifier_name]
+      );
+    }
+    
+    // 4. Elimina verifiche associate
     await client.query('DELETE FROM verifications WHERE event_id = $1', [id]);
     
-    // Elimina evento
+    // 5. Elimina evento
     await client.query('DELETE FROM events WHERE id = $1', [id]);
     
     await client.query('COMMIT');
     
-    res.json({ success: true, message: 'Evento eliminato' });
+    res.json({ 
+      success: true, 
+      message: 'Evento eliminato e punti rimossi',
+      points_removed: {
+        person: event.status === 'confirmed' ? event.event_points : 0,
+        declarer: event.status === 'confirmed' ? 5 : 0,
+        verifiers: verifiers.rows.length * 2
+      }
+    });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Errore eliminazione evento:', error);
