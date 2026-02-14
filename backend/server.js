@@ -42,16 +42,12 @@ async function initDatabase() {
 
 // Middleware
 const corsOptions = {
-  origin: '*', // Per debug su Render, poi restringere se necessario
-  credentials: true
+  origin: '*', // Permette richieste da qualsiasi frontend (incluso triumvitavolo.onrender.com)
+  credentials: false // Disabilitato per evitare conflitti con origin: '*'
 };
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-  setHeaders: (res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-  }
-}));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
