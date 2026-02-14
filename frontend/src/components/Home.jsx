@@ -34,7 +34,7 @@ function Home() {
 
       <div className="home-header">
         <h1>Amber Games</h1>
-        <p className="subtitle">Eventi, Verifiche e Classifica</p>
+        <p className="subtitle">Qualità, Passione e Alcol</p>
       </div>
 
       <div className="home-buttons">
