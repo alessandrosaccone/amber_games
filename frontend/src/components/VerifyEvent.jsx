@@ -62,7 +62,7 @@ function VerifyEvent() {
   const renderMedia = (event) => {
     if (!event.media_path) return null;
 
-    const mediaUrl = `http://localhost:5000/uploads/${event.media_path}`;
+    const mediaUrl = `${API_BASE_URL}/uploads/${event.media_path}`;
 
     switch (event.media_type) {
       case 'photo':
