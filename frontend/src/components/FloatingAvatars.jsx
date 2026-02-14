@@ -7,13 +7,13 @@ function FloatingAvatars() {
   const [avatars, setAvatars] = useState([]);
   const ballsRef = useRef([]);
   const animationRef = useRef(null);
-  const API = API_BASE_URL || 'https://triumvitavolo.onrender.org/'; // Usa la costante API_BASE_URL
+  const API = 'http://localhost:5000' || 'https://triumvitavolo.onrender.org'; // Usa la costante API_BASE_URL
 
   useEffect(() => {
     // Carica gli avatar dal backend
     const loadAvatars = async () => {
       try {
-        const response = await axios.get(`${API}/api/events/names`);
+        const response = await axios.get(`${API_BASE_URL}/api/events/names`);
         const people = response.data.filter(person => person.avatar_url);
         setAvatars(people);
       } catch (error) {
@@ -72,7 +72,7 @@ function FloatingAvatars() {
       // Costruisci URL corretto
       const avatarUrl = person.avatar_url.startsWith('http') 
         ? person.avatar_url 
-        : `${API_BASE_URL}${person.avatar_url}`;
+        : `${API}${person.avatar_url}`;
       
       img.src = avatarUrl;
     });
