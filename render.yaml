@@ -6,7 +6,7 @@ services:
     region: frankfurt
     plan: free
     branch: avatar
-    buildCommand: cd backend && npm install
+    buildCommand: cd backend && npm ci
     startCommand: cd backend && npm start
     envVars:
       - key: PORT
