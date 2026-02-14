@@ -16,8 +16,7 @@ services:
         fromDatabase:
           name: amber-games-db
           property: connectionString
-      - key: REACT_APP_API_URL
-        value: /
+
     healthCheckPath: /api/health
 
 databases:
