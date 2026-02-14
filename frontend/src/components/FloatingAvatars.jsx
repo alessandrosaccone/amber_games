@@ -72,7 +72,7 @@ function FloatingAvatars() {
       // Costruisci URL corretto
       const avatarUrl = person.avatar_url.startsWith('http') 
         ? person.avatar_url 
-        : `${API}${person.avatar_url}`;
+        : `${person.avatar_url}`;
       
       img.src = avatarUrl;
     });
