@@ -6,9 +6,9 @@ services:
     region: frankfurt
     plan: free
     branch: avatar
-    rootDir: backend
-    buildCommand: cd ../frontend && npm install && npm run build && cd ../backend && npm install
-    startCommand: npm start
+    rootDir: .
+    buildCommand: cd frontend && npm install && npm run build && cd ../backend && npm install
+    startCommand: cd backend && npm start
     envVars:
       - key: PORT
         value: 5000
