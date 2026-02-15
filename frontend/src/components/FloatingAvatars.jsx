@@ -70,10 +70,27 @@ function FloatingAvatars() {
       };
       
       // Costruisci URL corretto
-      const avatarUrl = person.avatar_url.startsWith('http') 
-        ? person.avatar_url 
-        : `${person.avatar_url}`;   
-    
+      let avatarUrl = person.avatar_url;
+
+      // Se l'URL inizia con /avatars/, è un asset statico del frontend (in public/avatars).
+      // In questo caso NON dobbiamo aggiungere l'URL del backend, perché in locale
+      // viene servito dal frontend (porta 3000).
+      const isStaticAsset = avatarUrl.startsWith('/avatars/') || avatarUrl.startsWith('avatars/');
+
+      if (!avatarUrl.startsWith('http') && !isStaticAsset) {
+        // In locale (localhost), frontend e backend sono su porte diverse (3000 vs 5000).
+        // Quindi dobbiamo aggiungere l'URL del backend per gli upload.
+        if (API_BASE_URL.includes('localhost')) {
+          avatarUrl = `${API_BASE_URL}${avatarUrl.startsWith('/') ? '' : '/'}${avatarUrl}`;
+        } else {
+          // In produzione (Render Monolith), siamo sullo stesso dominio.
+          // Il backend serve i file statici, quindi va bene il path relativo.
+          if (!avatarUrl.startsWith('/')) {
+            avatarUrl = '/' + avatarUrl;
+          }
+        }
+      }
+
       img.src = avatarUrl;
     });
 

@@ -9,8 +9,8 @@ const pool = require('./config/db');
 const eventsRouter = require('./routes/events');
 const verificationsRouter = require('./routes/verifications');
 const leaderboardRouter = require('./routes/leaderboard');
-const adminRouter = require('./routes/admin'); 
-const { startKeepAliveJob } = require('./jobs/keepAlive'); 
+const adminRouter = require('./routes/admin');
+const { startKeepAliveJob } = require('./jobs/keepAlive');
 
 
 const app = express();
@@ -42,21 +42,25 @@ async function initDatabase() {
 
 // Middleware
 const corsOptions = {
-  origin: '*', // Per debug su Render, poi restringere se necessario
+  origin: true,
   credentials: true
 };
-app.use(cors(corsOptions)); 
-app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve static files from the React app
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+  }
+}));// Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // API Routes
 app.use('/api/events', eventsRouter);
 app.use('/api/verifications', verificationsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
-app.use('/api/admin', adminRouter); 
+app.use('/api/admin', adminRouter);
 
 // Root route per Health Check e Debug
 app.get('/api/health', (req, res) => {
@@ -68,11 +72,17 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-  
+
 // Catch-all route for SPA: any request that doesn't match an API route
 // should return the React app's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  const indexPath = path.join(__dirname, '../frontend/build', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    // In development (local without build), send a message instead of crashing
+    res.status(404).send('Frontend build not found. If you are developing locally, make sure to run the frontend server on port 3000.');
+  }
 });
 
 // Avvio server dopo check DB

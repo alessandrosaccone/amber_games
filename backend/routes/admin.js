@@ -24,13 +24,13 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-    
+
     if (mimetype && extname) {
       return cb(null, true);
     }
@@ -41,10 +41,12 @@ const upload = multer({
 // POST - Verifica password
 router.post('/login', async (req, res) => {
   const { password } = req.body;
-  
+
   try {
     const match = await bcrypt.compare(password, PASSWORD_HASH);
-    
+
+    console.log(`Login attempt for password length ${password.length}: ${match ? 'SUCCESS' : 'FAILURE'}`);
+
     if (match) {
       res.json({ success: true, message: 'Accesso consentito' });
     } else {
@@ -59,7 +61,7 @@ router.post('/login', async (req, res) => {
 // POST - Aggiungi tipo di evento
 router.post('/event-types', async (req, res) => {
   const { name, points } = req.body;
-  
+
   try {
     const result = await pool.query(
       'INSERT INTO event_types (name, points) VALUES ($1, $2) RETURNING *',
@@ -75,7 +77,7 @@ router.post('/event-types', async (req, res) => {
 // DELETE - Elimina tipo di evento
 router.delete('/event-types/:id', async (req, res) => {
   const { id } = req.params;
-  
+
   try {
     await pool.query('DELETE FROM event_types WHERE id = $1', [id]);
     res.json({ success: true, message: 'Tipo evento eliminato' });
@@ -90,26 +92,26 @@ router.post('/people', upload.single('avatar'), async (req, res) => {
   const { name } = req.body;
   let avatarPath = req.file ? req.file.filename : null;
   avatarPath = avatarPath ? `/avatars/${avatarPath}` : null;
-  
+
   const client = await pool.connect();
-  
+
   try {
     await client.query('BEGIN');
-    
+
     // Inserisci persona CON avatar_url
     const personResult = await client.query(
       'INSERT INTO predefined_names (name, avatar_url) VALUES ($1, $2) RETURNING *',
       [name, avatarPath]
     );
-    
+
     // Crea score iniziale
     await client.query(
       'INSERT INTO scores (user_name, total_points) VALUES ($1, 0)',
       [name]
     );
-    
+
     await client.query('COMMIT');
-    
+
     res.status(201).json(personResult.rows[0]);
   } catch (error) {
     await client.query('ROLLBACK');
@@ -123,33 +125,33 @@ router.post('/people', upload.single('avatar'), async (req, res) => {
 // DELETE - Elimina persona
 router.delete('/people/:id', async (req, res) => {
   const { id } = req.params;
-  
+
   const client = await pool.connect();
-  
+
   try {
     await client.query('BEGIN');
-    
+
     // Ottieni nome persona
     const personResult = await client.query(
       'SELECT name FROM predefined_names WHERE id = $1',
       [id]
     );
-    
+
     if (personResult.rows.length === 0) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Persona non trovata' });
     }
-    
+
     const personName = personResult.rows[0].name;
-    
+
     // Elimina persona
     await client.query('DELETE FROM predefined_names WHERE id = $1', [id]);
-    
+
     // Elimina score
     await client.query('DELETE FROM scores WHERE user_name = $1', [personName]);
-    
+
     await client.query('COMMIT');
-    
+
     res.json({ success: true, message: 'Persona eliminata' });
   } catch (error) {
     await client.query('ROLLBACK');
@@ -164,12 +166,12 @@ router.delete('/people/:id', async (req, res) => {
 // DELETE - Elimina evento specifico E rimuovi punti
 router.delete('/events/:id', async (req, res) => {
   const { id } = req.params;
-  
+
   const client = await pool.connect();
-  
+
   try {
     await client.query('BEGIN');
-    
+
     // 1. Recupera informazioni evento
     const eventResult = await client.query(`
       SELECT e.*, et.points as event_points
@@ -177,14 +179,14 @@ router.delete('/events/:id', async (req, res) => {
       JOIN event_types et ON e.event_type_id = et.id
       WHERE e.id = $1
     `, [id]);
-    
+
     if (eventResult.rows.length === 0) {
       await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Evento non trovato' });
     }
-    
+
     const event = eventResult.rows[0];
-    
+
     // 2. Se l'evento è CONFERMATO, rimuovi punti
     if (event.status === 'confirmed') {
       // Rimuovi punti dalla persona dell'evento
@@ -192,37 +194,37 @@ router.delete('/events/:id', async (req, res) => {
         'UPDATE scores SET total_points = total_points - $1, updated_at = CURRENT_TIMESTAMP WHERE user_name = $2',
         [event.event_points, event.person_name]
       );
-      
+
       // Rimuovi 5 punti dal dichiarante
       await client.query(
         'UPDATE scores SET total_points = total_points - 5, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
         [event.declarer_name]
       );
     }
-    
+
     // 3. Rimuovi 2 punti da TUTTI i verificatori (anche se evento non confermato)
     const verifiers = await client.query(
       'SELECT DISTINCT verifier_name FROM verifications WHERE event_id = $1',
       [id]
     );
-    
+
     for (const verifier of verifiers.rows) {
       await client.query(
         'UPDATE scores SET total_points = total_points - 2, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
         [verifier.verifier_name]
       );
     }
-    
+
     // 4. Elimina verifiche associate
     await client.query('DELETE FROM verifications WHERE event_id = $1', [id]);
-    
+
     // 5. Elimina evento
     await client.query('DELETE FROM events WHERE id = $1', [id]);
-    
+
     await client.query('COMMIT');
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       message: 'Evento eliminato e punti rimossi',
       points_removed: {
         person: event.status === 'confirmed' ? event.event_points : 0,
@@ -258,24 +260,24 @@ router.get('/events', async (req, res) => {
 // DELETE - Reset completo database
 router.delete('/reset-all', async (req, res) => {
   const client = await pool.connect();
-  
+
   try {
     await client.query('BEGIN');
-    
+
     // Elimina tutte le verifiche
     await client.query('DELETE FROM verifications');
-    
+
     // Elimina tutti gli eventi
     await client.query('DELETE FROM events');
-    
+
     // Reset tutti i punteggi a 0
     await client.query('UPDATE scores SET total_points = 0, updated_at = CURRENT_TIMESTAMP');
-    
+
     await client.query('COMMIT');
-    
-    res.json({ 
-      success: true, 
-      message: 'Database resettato: eventi e verifiche eliminate, punteggi azzerati' 
+
+    res.json({
+      success: true,
+      message: 'Database resettato: eventi e verifiche eliminate, punteggi azzerati'
     });
   } catch (error) {
     await client.query('ROLLBACK');
