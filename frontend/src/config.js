@@ -6,24 +6,18 @@ export const getMediaUrl = (path) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;
 
-    // Normalize path: removes leading slash if present
+    // Normalizziamo il path (rimuoviamo slash iniziale)
     const cleanPath = path.startsWith('/') ? path.substring(1) : path;
 
-    // In sviluppo aggiungiamo il dominio backend, in produzione (monolith) usiamo path relativi
+    // In sviluppo usciamo il dominio backend (localhost:5000), in produzione path relativi (Monolith)
     const baseUrl = API_BASE_URL.includes('localhost') ? API_BASE_URL : '';
 
-    // Se il path inizia con 'avatars/', è un asset statico del frontend (in public/avatars)
-    // Quindi ritorniamo un path relativo (che in locale punta a localhost:3000, in prod allo stesso dominio)
-    if (cleanPath.startsWith('avatars/')) {
-        return `/${cleanPath}`;
-    }
-
-    // Se è un upload (starts with 'uploads/'), usiamo il server backend
-    if (cleanPath.startsWith('uploads/')) {
+    // Se il path ha già un prefisso conosciuto, lo usiamo così com'è
+    if (cleanPath.startsWith('uploads/') || cleanPath.startsWith('avatars/')) {
         return `${baseUrl}/${cleanPath}`;
     }
 
-    // Default: assumiamo sia un'immagine d'evento nella root di uploads
+    // Default: se è solo un nome file senza cartella, assumiamo sia nella root di uploads
     return `${baseUrl}/uploads/${cleanPath}`;
 };
 

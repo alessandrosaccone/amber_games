@@ -21,17 +21,12 @@ function UserProfile() {
                 const eventsRes = await axios.get(`${API_BASE_URL}/api/events/user/${userName}`);
                 setEvents(eventsRes.data);
 
-                // 2. Fetch User Details (Avatar/Name) - fallback if no events or to get correct avatar
-                // Since we don't have a specific user endpoint, we get all names and find ours
+                // 2. Fetch User Avatar from names list
                 const namesRes = await axios.get(`${API_BASE_URL}/api/events/names`);
                 const user = namesRes.data.find(u => u.name === userName);
-
-                if (eventsRes.data.length > 0) {
-                    setUserAvatar(eventsRes.data[0].person_avatar);
-                } else if (user) {
+                if (user) {
                     setUserAvatar(user.avatar_url);
                 }
-
             } catch (err) {
                 console.error('Errore caricamento dati:', err);
                 setError('Impossibile caricare il profilo.');

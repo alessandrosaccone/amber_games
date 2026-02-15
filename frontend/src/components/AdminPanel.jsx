@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import API_BASE_URL from '../config'; 
+import API_BASE_URL, { getMediaUrl } from '../config';
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -28,9 +28,9 @@ function AdminPanel() {
   const loadData = async () => {
     try {
       const [typesRes, eventsRes, peopleRes] = await Promise.all([
-        axios.get(`${API_BASE_URL}/api/events/types`),
-        axios.get(`${API_BASE_URL}/api/admin/events`),
-        axios.get(`${API_BASE_URL}/api/admin/people`)
+        axios.get(`${API_BASE_URL} /api/events / types`),
+        axios.get(`${API_BASE_URL} /api/admin / events`),
+        axios.get(`${API_BASE_URL} /api/admin / people`)
       ]);
       setEventTypes(typesRes.data);
       setEvents(eventsRes.data);
@@ -51,7 +51,7 @@ function AdminPanel() {
     setMessage(null);
 
     try {
-      await axios.post(`${API_BASE_URL}/api/admin/event-types`, newEventType);
+      await axios.post(`${API_BASE_URL} /api/admin / event - types`, newEventType);
       setMessage({ type: 'success', text: 'Tipo evento aggiunto!' });
       setNewEventType({ name: '', points: '' });
       loadData();
@@ -66,7 +66,7 @@ function AdminPanel() {
     if (!window.confirm('Sei sicuro di voler eliminare questo tipo di evento?')) return;
 
     try {
-      await axios.delete(`${API_BASE_URL}/api/admin/event-types/${id}`);
+      await axios.delete(`${API_BASE_URL} /api/admin / event - types / ${id} `);
       setMessage({ type: 'success', text: 'Tipo evento eliminato!' });
       loadData();
     } catch (error) {
@@ -86,7 +86,7 @@ function AdminPanel() {
     }
 
     try {
-      await axios.post(`${API_BASE_URL}/api/admin/people`, formData, {
+      await axios.post(`${API_BASE_URL} /api/admin / people`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setMessage({ type: 'success', text: 'Persona aggiunta!' });
@@ -103,7 +103,7 @@ function AdminPanel() {
     if (!window.confirm('Sei sicuro? Questo eliminerà anche i suoi punteggi.')) return;
 
     try {
-      await axios.delete(`${API_BASE_URL}/api/admin/people/${id}`);
+      await axios.delete(`${API_BASE_URL} /api/admin / people / ${id} `);
       setMessage({ type: 'success', text: 'Persona eliminata!' });
       loadData();
     } catch (error) {
@@ -115,7 +115,7 @@ function AdminPanel() {
     if (!window.confirm('Sei sicuro di voler eliminare questo evento?')) return;
 
     try {
-      await axios.delete(`${API_BASE_URL}/api/admin/events/${id}`);
+      await axios.delete(`${API_BASE_URL} /api/admin / events / ${id} `);
       setMessage({ type: 'success', text: 'Evento eliminato!' });
       loadData();
     } catch (error) {
@@ -127,15 +127,15 @@ function AdminPanel() {
     const confirmed = window.confirm(
       'ATTENZIONE! Questa azione eliminerà tutti gli eventi e resetterà i punteggi a 0. Continuare?'
     );
-    
+
     if (!confirmed) return;
 
     const doubleConfirm = window.confirm('Sei ASSOLUTAMENTE sicuro? Questa azione è irreversibile!');
-    
+
     if (!doubleConfirm) return;
 
     try {
-      await axios.delete(`${API_BASE_URL}/api/admin/reset-all`);
+      await axios.delete(`${API_BASE_URL} /api/admin / reset - all`);
       setMessage({ type: 'success', text: 'Database resettato!' });
       loadData();
     } catch (error) {
@@ -153,32 +153,32 @@ function AdminPanel() {
       </div>
 
       {message && (
-        <div className={`alert alert-${message.type === 'success' ? 'success' : 'error'}`}>
+        <div className={`alert alert - ${message.type === 'success' ? 'success' : 'error'} `}>
           {message.text}
         </div>
       )}
 
       {/* Tabs */}
       <div className="admin-tabs">
-        <button 
+        <button
           className={activeTab === 'events' ? 'active' : ''}
           onClick={() => setActiveTab('events')}
         >
           Eventi
         </button>
-        <button 
+        <button
           className={activeTab === 'types' ? 'active' : ''}
           onClick={() => setActiveTab('types')}
         >
           Tipi Evento
         </button>
-        <button 
+        <button
           className={activeTab === 'people' ? 'active' : ''}
           onClick={() => setActiveTab('people')}
         >
           Persone
         </button>
-        <button 
+        <button
           className={activeTab === 'danger' ? 'active' : ''}
           onClick={() => setActiveTab('danger')}
         >
@@ -205,8 +205,8 @@ function AdminPanel() {
                     <p><strong>Conferme:</strong> {event.confirmations}/3</p>
                     <p><strong>Rifiuti:</strong> {event.rejections}/3</p>
                   </div>
-                  <button 
-                    className="danger" 
+                  <button
+                    className="danger"
                     onClick={() => handleDeleteEvent(event.id)}
                     style={{ marginTop: '10px' }}
                   >
@@ -229,7 +229,7 @@ function AdminPanel() {
                   <input
                     type="text"
                     value={newEventType.name}
-                    onChange={(e) => setNewEventType({...newEventType, name: e.target.value})}
+                    onChange={(e) => setNewEventType({ ...newEventType, name: e.target.value })}
                     placeholder="es. Compleanno"
                     required
                   />
@@ -239,7 +239,7 @@ function AdminPanel() {
                   <input
                     type="number"
                     value={newEventType.points}
-                    onChange={(e) => setNewEventType({...newEventType, points: e.target.value})}
+                    onChange={(e) => setNewEventType({ ...newEventType, points: e.target.value })}
                     placeholder="es. 10"
                     required
                   />
@@ -257,8 +257,8 @@ function AdminPanel() {
                   <div>
                     <strong>{type.name}</strong> - {type.points} punti
                   </div>
-                  <button 
-                    className="danger" 
+                  <button
+                    className="danger"
                     onClick={() => handleDeleteEventType(type.id)}
                     style={{ width: 'auto', padding: '8px 16px' }}
                   >
@@ -281,7 +281,7 @@ function AdminPanel() {
                   <input
                     type="text"
                     value={newPerson.name}
-                    onChange={(e) => setNewPerson({...newPerson, name: e.target.value})}
+                    onChange={(e) => setNewPerson({ ...newPerson, name: e.target.value })}
                     placeholder="Nome completo"
                     required
                   />
@@ -291,7 +291,7 @@ function AdminPanel() {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => setNewPerson({...newPerson, avatar: e.target.files[0]})}
+                    onChange={(e) => setNewPerson({ ...newPerson, avatar: e.target.files[0] })}
                     className="file-input"
                   />
                 </div>
@@ -305,11 +305,20 @@ function AdminPanel() {
             {people.map(person => (
               <div key={person.id} className="event-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <strong>{person.name}</strong> (ID: {person.id})
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    {person.avatar_url && (
+                      <img
+                        src={getMediaUrl(person.avatar_url)}
+                        alt="Avatar"
+                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'contain' }}
+                      />
+                    )}
+                    <div>
+                      <strong>{person.name}</strong> (ID: {person.id})
+                    </div>
                   </div>
-                  <button 
-                    className="danger" 
+                  <button
+                    className="danger"
                     onClick={() => handleDeletePerson(person.id)}
                     style={{ width: 'auto', padding: '8px 16px' }}
                   >
@@ -328,11 +337,11 @@ function AdminPanel() {
             <div className="card" style={{ borderColor: '#ff6b9d' }}>
               <h3>Reset Completo Database</h3>
               <p style={{ color: '#c0c0d8', marginBottom: '20px' }}>
-                Questa azione eliminerà tutti gli eventi e le verifiche, 
+                Questa azione eliminerà tutti gli eventi e le verifiche,
                 e resetterà tutti i punteggi a 0. Le persone e i tipi di evento rimarranno.
               </p>
-              <button 
-                className="danger" 
+              <button
+                className="danger"
                 onClick={handleResetDatabase}
               >
                 Reset Database
@@ -341,7 +350,7 @@ function AdminPanel() {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
 
