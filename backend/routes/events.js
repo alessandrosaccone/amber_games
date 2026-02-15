@@ -99,6 +99,32 @@ router.post('/', upload.single('media'), async (req, res) => {
   }
 });
 
+// GET eventi confermati per un utente specifico
+router.get('/user/:userName', async (req, res) => {
+  const { userName } = req.params;
+  
+  try {
+    const result = await pool.query(`
+      SELECT e.*, 
+             et.name as event_type_name, 
+             et.points as event_points,
+             pn1.avatar_url as person_avatar,
+             pn2.avatar_url as declarer_avatar
+      FROM events e
+      JOIN event_types et ON e.event_type_id = et.id
+      LEFT JOIN predefined_names pn1 ON e.person_name = pn1.name
+      LEFT JOIN predefined_names pn2 ON e.declarer_name = pn2.name
+      WHERE e.person_name = $1 AND e.status = 'confirmed'
+      ORDER BY e.created_at DESC
+    `, [userName]);
+    
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Errore nel recupero degli eventi dell\'utente' });
+  }
+});
+
 // GET evento singolo
 router.get('/:id', async (req, res) => {
   try {
