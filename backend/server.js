@@ -84,6 +84,12 @@ app.use('/api/verifications', verificationsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/admin', adminRouter);
 
+// Debug logging for media
+app.use(['/uploads', '/avatars'], (req, res, next) => {
+  console.log(`Media request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Root route per Health Check e Debug
 app.get('/api/health', (req, res) => {
   res.status(200).json({

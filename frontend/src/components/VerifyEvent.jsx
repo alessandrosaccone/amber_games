@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import API_BASE_URL, { getMediaUrl } from '../config';
 
 function VerifyEvent() {
   const navigate = useNavigate();
@@ -62,13 +62,13 @@ function VerifyEvent() {
   const renderMedia = (event) => {
     if (!event.media_path) return null;
 
-    const mediaUrl = `${API_BASE_URL}/uploads/${event.media_path}`;
+    const mediaUrl = getMediaUrl(event.media_path);
 
     switch (event.media_type) {
       case 'photo':
         return <img src={mediaUrl} alt="Evento" />;
       case 'video':
-        return <video controls src={mediaUrl} />;
+        return <video controls src={mediaUrl} playsInline preload="metadata" />;
       case 'audio':
         return <audio controls src={mediaUrl} />;
       default:
@@ -120,13 +120,13 @@ function VerifyEvent() {
             <div key={event.id} className="event-card">
               <div className="event-info">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
-                  {event.person_avatar && <img src={event.person_avatar} alt="Avatar" style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'contain' }} />}
+                  {event.person_avatar && <img src={getMediaUrl(event.person_avatar)} alt="Avatar" style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'contain' }} />}
                   <p style={{ margin: 0 }}><strong>Persona:</strong> {event.person_name}</p>
                 </div>
                 <p><strong>Evento:</strong> {event.event_type_name}</p>
                 <p><strong>Punti:</strong> {event.event_points}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
-                  {event.declarer_avatar && <img src={event.declarer_avatar} alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'contain' }} />}
+                  {event.declarer_avatar && <img src={getMediaUrl(event.declarer_avatar)} alt="Avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'contain' }} />}
                   <p style={{ margin: 0 }}><strong>Da:</strong> {event.declarer_name}</p>
                 </div>
                 {event.description && (

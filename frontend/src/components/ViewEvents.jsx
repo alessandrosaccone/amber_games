@@ -257,7 +257,7 @@ function ViewEvents() {
                             border: '2px solid rgba(255, 255, 255, 0.1)'
                           }}
                         >
-                          <source src={getMediaUrl(event.media_path)} type="video/mp4" />
+                          <source src={getMediaUrl(event.media_path)} />
                           Il tuo browser non supporta il tag video.
                         </video>
                       )}

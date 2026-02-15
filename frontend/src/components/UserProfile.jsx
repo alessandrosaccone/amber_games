@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import API_BASE_URL, { getMediaUrl } from '../config';
 
 function UserProfile() {
     const { userName } = useParams();
@@ -40,7 +40,7 @@ function UserProfile() {
             <div className="home-header">
                 {userAvatar && (
                     <img
-                        src={userAvatar}
+                        src={getMediaUrl(userAvatar)}
                         alt={userName}
                         style={{
                             width: '100px',
@@ -85,11 +85,11 @@ function UserProfile() {
                                 {event.media_path && (
                                     <div className="media-preview">
                                         {event.media_type === 'video' ? (
-                                            <video controls src={`${API_BASE_URL}/uploads/${event.media_path}`} />
+                                            <video controls src={getMediaUrl(event.media_path)} playsInline preload="metadata" />
                                         ) : event.media_type === 'audio' ? (
-                                            <audio controls src={`${API_BASE_URL}/uploads/${event.media_path}`} />
+                                            <audio controls src={getMediaUrl(event.media_path)} />
                                         ) : (
-                                            <img src={`${API_BASE_URL}/uploads/${event.media_path}`} alt="Evento" />
+                                            <img src={getMediaUrl(event.media_path)} alt="Evento" />
                                         )}
                                     </div>
                                 )}
