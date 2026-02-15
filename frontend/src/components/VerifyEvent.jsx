@@ -10,6 +10,7 @@ function VerifyEvent() {
   const [selectedName, setSelectedName] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -66,7 +67,14 @@ function VerifyEvent() {
 
     switch (event.media_type) {
       case 'photo':
-        return <img src={mediaUrl} alt="Evento" />;
+        return (
+          <img
+            src={mediaUrl}
+            alt="Evento"
+            onClick={() => setSelectedImage(mediaUrl)}
+            style={{ cursor: 'pointer' }}
+          />
+        );
       case 'video':
         return <video controls src={mediaUrl} playsInline preload="metadata" />;
       case 'audio':
@@ -87,7 +95,7 @@ function VerifyEvent() {
   return (
     <div className="container">
       <h1>Amber Games - Verifica</h1>
-      <p className="subtitle">Conferma o rifiuta (+1 pt)</p>
+      <p className="subtitle">Conferma o rifiuta (+0.1 pt)</p>
 
       {message && (
         <div className={`alert alert-${message.type === 'success' ? 'success' : 'error'}`}>
@@ -181,6 +189,16 @@ function VerifyEvent() {
           Indietro
         </button>
       </div>
+
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setSelectedImage(null)}>×</button>
+            <img src={selectedImage} alt="Full size" className="modal-image" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

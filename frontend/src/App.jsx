@@ -6,7 +6,6 @@ import VerifyEvent from './components/VerifyEvent';
 import Leaderboard from './components/Leaderboard';
 import AdminLogin from './components/AdminLogin';
 import AdminPanel from './components/AdminPanel';
-import ViewEvents from './components/ViewEvents';
 import UserProfile from './components/UserProfile';
 import './App.css';
 
@@ -23,7 +22,6 @@ function App() {
           <Route path="/profile/:userName" element={<UserProfile />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/view-events" element={<ViewEvents />} />
         </Routes>
       </div>
     </Router>

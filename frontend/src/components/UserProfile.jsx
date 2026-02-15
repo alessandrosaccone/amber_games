@@ -11,6 +11,7 @@ function UserProfile() {
     const [error, setError] = useState(null);
 
     const [userAvatar, setUserAvatar] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         const loadData = async () => {
@@ -93,7 +94,12 @@ function UserProfile() {
                                         ) : event.media_type === 'audio' ? (
                                             <audio controls src={getMediaUrl(event.media_path)} />
                                         ) : (
-                                            <img src={getMediaUrl(event.media_path)} alt="Evento" />
+                                            <img
+                                                src={getMediaUrl(event.media_path)}
+                                                alt="Evento"
+                                                onClick={() => setSelectedImage(getMediaUrl(event.media_path))}
+                                                style={{ cursor: 'pointer' }}
+                                            />
                                         )}
                                     </div>
                                 )}
@@ -120,6 +126,16 @@ function UserProfile() {
                     Torna alla classifica
                 </button>
             </div>
+
+            {/* Lightbox Modal */}
+            {selectedImage && (
+                <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <button className="modal-close" onClick={() => setSelectedImage(null)}>×</button>
+                        <img src={selectedImage} alt="Full size" className="modal-image" />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
