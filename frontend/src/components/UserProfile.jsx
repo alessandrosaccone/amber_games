@@ -122,8 +122,8 @@ function UserProfile() {
             </div>
 
             <div className="button-group mt-20">
-                <button className="secondary" onClick={() => navigate('/leaderboard')}>
-                    Torna alla classifica
+                <button className="secondary" onClick={() => navigate(-1)}>
+                    Torna indietro
                 </button>
             </div>
 
