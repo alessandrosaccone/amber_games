@@ -147,8 +147,12 @@ router.post('/', async (req, res) => {
 
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error(err);
-    res.status(500).json({ error: 'Errore nella verifica dell\'evento' });
+    console.error('Verification error:', err);
+    res.status(500).json({
+      error: 'Errore nella verifica dell\'evento',
+      details: err.message,
+      code: err.code
+    });
   } finally {
     client.release();
   }

@@ -332,5 +332,28 @@ router.get('/debug-all', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// GET - Migration Points (Tempoanea per Render)
+router.get('/migrate-db-points', async (req, res) => {
+  let client;
+  try {
+    client = await pool.connect();
+    await client.query('BEGIN');
+
+    console.log('Changing scores.total_points to NUMERIC...');
+    await client.query('ALTER TABLE scores ALTER COLUMN total_points TYPE NUMERIC(10,2)');
+
+    console.log('Changing event_types.points to NUMERIC...');
+    await client.query('ALTER TABLE event_types ALTER COLUMN points TYPE NUMERIC(10,2)');
+
+    await client.query('COMMIT');
+    res.json({ success: true, message: 'Database migrato ai decimali con successo!' });
+  } catch (err) {
+    if (client) await client.query('ROLLBACK');
+    console.error('Migration failed:', err);
+    res.status(500).json({ error: 'Migrazione fallita: ' + err.message });
+  } finally {
+    if (client) client.release();
+  }
+});
 
 module.exports = router;
