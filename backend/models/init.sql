@@ -11,7 +11,7 @@ CREATE TABLE predefined_names (
 CREATE TABLE event_types (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    points INTEGER NOT NULL
+    points NUMERIC(10,2) NOT NULL
 );
 
 -- Tabella eventi
@@ -43,7 +43,7 @@ CREATE TABLE verifications (
 CREATE TABLE scores (
     id SERIAL PRIMARY KEY,
     user_name VARCHAR(100) UNIQUE NOT NULL,
-    total_points INTEGER DEFAULT 0,
+    total_points NUMERIC(10,2) DEFAULT 0,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

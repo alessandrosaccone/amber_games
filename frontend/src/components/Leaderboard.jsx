@@ -64,7 +64,7 @@ function Leaderboard() {
               </div>
               {topThree[1].avatar_url && <img src={getMediaUrl(topThree[1].avatar_url)} alt={topThree[1].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[1].user_name}</div>
-              <div className="podium-points">{topThree[1].total_points} pt</div>
+              <div className="podium-points">{Number(topThree[1].total_points).toFixed(1)} pt</div>
             </div>
           )}
 
@@ -79,7 +79,7 @@ function Leaderboard() {
               </div>
               {topThree[0].avatar_url && <img src={getMediaUrl(topThree[0].avatar_url)} alt={topThree[0].user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[0].user_name}</div>
-              <div className="podium-points">{topThree[0].total_points} pt</div>
+              <div className="podium-points">{Number(topThree[0].total_points).toFixed(1)} pt</div>
             </div>
           )}
 
@@ -94,7 +94,7 @@ function Leaderboard() {
               </div>
               {topThree[2].avatar_url && <img src={getMediaUrl(topThree[2].avatar_url)} alt={topThree[2].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[2].user_name}</div>
-              <div className="podium-points">{topThree[2].total_points} pt</div>
+              <div className="podium-points">{Number(topThree[2].total_points).toFixed(1)} pt</div>
             </div>
           )}
         </div>
@@ -114,7 +114,7 @@ function Leaderboard() {
                 {score.avatar_url && <img src={getMediaUrl(score.avatar_url)} alt={score.user_name} className="avatar-list" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }} />}
                 <span className="leaderboard-name">{score.user_name}</span>
               </div>
-              <span className="leaderboard-points">{score.total_points} pt</span>
+              <span className="leaderboard-points">{Number(score.total_points).toFixed(1)} pt</span>
             </div>
           ))}
         </div>

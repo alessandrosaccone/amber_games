@@ -38,7 +38,7 @@ function UserProfile() {
     }, [userName]);
 
     // Calculate total points
-    const totalPoints = events.reduce((sum, event) => sum + (event.event_points || 0), 0);
+    const totalPoints = events.reduce((sum, event) => sum + Number(event.event_points || 0), 0).toFixed(1);
 
     return (
         <div className="container">
@@ -107,7 +107,7 @@ function UserProfile() {
                                 <div className="event-info">
                                     <p>{event.description}</p>
                                     <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span>Punti: <strong style={{ color: '#56ab2f' }}>+{event.event_points}</strong></span>
+                                        <span>Punti: <strong style={{ color: '#56ab2f' }}>+{Number(event.event_points).toFixed(1)}</strong></span>
                                         {event.declarer_name && (
                                             <span style={{ fontSize: '0.75rem', color: '#a0a0b8' }}>
                                                 Dichiarato da: <strong>{event.declarer_name}</strong>
