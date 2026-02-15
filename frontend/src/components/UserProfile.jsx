@@ -1,0 +1,123 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import API_BASE_URL from '../config';
+
+function UserProfile() {
+    const { userName } = useParams();
+    const navigate = useNavigate();
+    const [events, setEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchUserEvents();
+    }, [userName]);
+
+    const fetchUserEvents = async () => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/api/events/user/${userName}`);
+            setEvents(response.data);
+            setLoading(false);
+        } catch (err) {
+            console.error('Errore nel caricamento degli eventi:', err);
+            setError('Impossibile caricare il profilo utente.');
+            setLoading(false);
+        }
+    };
+
+    if (loading) return <div className="container"><div className="loading">Caricamento profilo...</div></div>;
+
+    // Calculate total points
+    const totalPoints = events.reduce((sum, event) => sum + (event.event_points || 0), 0);
+
+    // Get avatar from the first event (if available) or use a placeholder
+    // In a real app, you might have a dedicated user endpoint, but here we can try to infer it from events
+    const userAvatar = events.length > 0 ? events[0].person_avatar : null;
+
+    return (
+        <div className="container">
+            <div className="home-header">
+                {userAvatar && (
+                    <img
+                        src={userAvatar}
+                        alt={userName}
+                        style={{
+                            width: '100px',
+                            height: '100px',
+                            borderRadius: '50%',
+                            objectFit: 'contain',
+                            border: '4px solid rgba(255, 255, 255, 0.2)',
+                            marginBottom: '10px'
+                        }}
+                    />
+                )}
+                <h1>{userName}</h1>
+                <p className="subtitle">Punti Totali: <strong style={{ color: '#8ac5ff' }}>{totalPoints}</strong></p>
+            </div>
+
+            <div className="scrollable-content">
+                {error && <div className="alert alert-error">{error}</div>}
+
+                {events.length === 0 && !error ? (
+                    <div className="alert alert-info">Nessun evento registrato per questo utente.</div>
+                ) : (
+                    <div>
+                        <h2 style={{ paddingLeft: '8px', borderLeft: '3px solid #667eea', marginBottom: '16px' }}>Storico Eventi</h2>
+                        {events.map((event) => (
+                            <div key={event.id} className="event-card">
+                                <div className="event-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                    <span style={{
+                                        background: 'rgba(102, 126, 234, 0.2)',
+                                        color: '#8ac5ff',
+                                        padding: '4px 8px',
+                                        borderRadius: '4px',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 'bold'
+                                    }}>
+                                        {event.event_type_name}
+                                    </span>
+                                    <span style={{ color: '#a0a0b8', fontSize: '0.75rem' }}>
+                                        {new Date(event.created_at).toLocaleDateString()}
+                                    </span>
+                                </div>
+
+                                {event.media_path && (
+                                    <div className="media-preview">
+                                        {event.media_type === 'video' ? (
+                                            <video controls src={`${API_BASE_URL}/uploads/${event.media_path}`} />
+                                        ) : event.media_type === 'audio' ? (
+                                            <audio controls src={`${API_BASE_URL}/uploads/${event.media_path}`} />
+                                        ) : (
+                                            <img src={`${API_BASE_URL}/uploads/${event.media_path}`} alt="Evento" />
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="event-info">
+                                    <p>{event.description}</p>
+                                    <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span>Punti: <strong style={{ color: '#56ab2f' }}>+{event.event_points}</strong></span>
+                                        {event.declarer_name && (
+                                            <span style={{ fontSize: '0.75rem', color: '#a0a0b8' }}>
+                                                Dichiarato da: <strong>{event.declarer_name}</strong>
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            <div className="button-group mt-20">
+                <button className="secondary" onClick={() => navigate('/leaderboard')}>
+                    Torna alla classifica
+                </button>
+            </div>
+        </div>
+    );
+}
+
+export default UserProfile;

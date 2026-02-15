@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import FloatingAvatars from './FloatingAvatars'; 
+import FloatingAvatars from './FloatingAvatars';
 
 function Home() {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ function Home() {
         <button onClick={() => navigate('/view-events')}>
           Visualizza Eventi
         </button>
-        <button className="secondary" onClick={() => navigate('/leaderboard')}>
+        <button className="gold" onClick={() => navigate('/leaderboard')}>
           Classifica
         </button>
       </div>

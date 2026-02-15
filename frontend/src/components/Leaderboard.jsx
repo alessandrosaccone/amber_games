@@ -55,7 +55,10 @@ function Leaderboard() {
         <div className="podium">
           {/* Secondo Posto */}
           {topThree[1] && (
-            <div className="podium-place">
+            <div
+              className="podium-place clickable"
+              onClick={() => navigate(`/profile/${topThree[1].user_name}`)}
+            >
               <div className="podium-position second">
                 {topThree[1].rank}°
               </div>
@@ -67,7 +70,10 @@ function Leaderboard() {
 
           {/* Primo Posto */}
           {topThree[0] && (
-            <div className="podium-place">
+            <div
+              className="podium-place clickable"
+              onClick={() => navigate(`/profile/${topThree[0].user_name}`)}
+            >
               <div className="podium-position first">
                 {topThree[0].rank}°
               </div>
@@ -79,7 +85,10 @@ function Leaderboard() {
 
           {/* Terzo Posto */}
           {topThree[2] && (
-            <div className="podium-place">
+            <div
+              className="podium-place clickable"
+              onClick={() => navigate(`/profile/${topThree[2].user_name}`)}
+            >
               <div className="podium-position third">
                 {topThree[2].rank}°
               </div>
@@ -95,7 +104,11 @@ function Leaderboard() {
         <div className="leaderboard-list">
           <h2>Tutta la classifica</h2>
           {rest.map((score) => (
-            <div key={score.id} className="leaderboard-item">
+            <div
+              key={score.id}
+              className="leaderboard-item clickable"
+              onClick={() => navigate(`/profile/${score.user_name}`)}
+            >
               <span className="leaderboard-rank">{score.rank}°</span>
               <div className="leaderboard-user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
                 {score.avatar_url && <img src={score.avatar_url} alt={score.user_name} className="avatar-list" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }} />}
