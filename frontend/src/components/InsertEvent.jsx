@@ -79,7 +79,12 @@ function InsertEvent() {
       setTimeout(() => navigate('/'), 2000);
     } catch (error) {
       console.error('Errore nell\'inserimento:', error);
-      setMessage({ type: 'error', text: 'Errore nell\'inserimento dell\'evento' });
+      const errorData = error.response?.data;
+      const errorText = errorData?.details
+        ? `${errorData.error}: ${errorData.details}`
+        : (errorData?.error || 'Errore nell\'inserimento dell\'evento');
+
+      setMessage({ type: 'error', text: errorText });
     } finally {
       setLoading(false);
     }

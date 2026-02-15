@@ -12,6 +12,15 @@ const leaderboardRouter = require('./routes/leaderboard');
 const adminRouter = require('./routes/admin');
 const { startKeepAliveJob } = require('./jobs/keepAlive');
 
+// Global error logging
+process.on('uncaughtException', (err) => {
+  console.error('CRITICAL: Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;

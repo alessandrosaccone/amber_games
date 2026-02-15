@@ -53,9 +53,14 @@ function VerifyEvent() {
       }, 1500);
     } catch (error) {
       console.error('Errore nella verifica:', error);
+      const errorData = error.response?.data;
+      const errorText = errorData?.details
+        ? `${errorData.error}: ${errorData.details}`
+        : (errorData?.error || 'Errore nella verifica');
+
       setMessage({
         type: 'error',
-        text: error.response?.data?.error || 'Errore nella verifica'
+        text: errorText
       });
     }
   };
