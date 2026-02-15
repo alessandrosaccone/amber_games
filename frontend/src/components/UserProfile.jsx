@@ -93,6 +93,8 @@ function UserProfile() {
 
                                 {event.media_path && (
                                     <div className="media-preview">
+                                        {/* Debug output */}
+                                        {console.log(`Event ${event.id} media:`, event.media_path, getMediaUrl(event.media_path))}
                                         {event.media_type === 'video' ? (
                                             <video controls src={getMediaUrl(event.media_path)} playsInline preload="metadata" />
                                         ) : event.media_type === 'audio' ? (

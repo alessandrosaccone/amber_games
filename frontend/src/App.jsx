@@ -23,7 +23,6 @@ function App() {
           <Route path="/profile/:userName" element={<UserProfile />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/view-events" element={<ViewEvents />} />
         </Routes>
       </div>
     </Router>

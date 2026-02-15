@@ -44,9 +44,6 @@ function Home() {
         <button onClick={() => navigate('/verify')}>
           Verifica Evento
         </button>
-        <button onClick={() => navigate('/view-events')}>
-          Visualizza Eventi
-        </button>
         <button className="gold" onClick={() => navigate('/leaderboard')}>
           Classifica
         </button>

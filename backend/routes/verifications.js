@@ -47,10 +47,14 @@ router.post('/', async (req, res) => {
       [event_id, verifier_name, verification_type]
     );
 
-    // AGGIUNGI 2 PUNTI AL VERIFICATORE (indipendentemente da conferma o rifiuto)
+    // Calcola i punti in base al tipo di verifica
+    // USER REQUEST: Chi verifica prende 0.1
+    const pointsToAward = 0.1;
+
+    // AGGIUNGI PUNTI AL VERIFICATORE
     await client.query(
-      'UPDATE scores SET total_points = total_points + 1, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
-      [verifier_name]
+      'UPDATE scores SET total_points = total_points + $1, updated_at = CURRENT_TIMESTAMP WHERE user_name = $2',
+      [pointsToAward, verifier_name]
     );
 
     // Aggiorna il contatore
@@ -95,9 +99,9 @@ router.post('/', async (req, res) => {
         [eventPoints, evt.person_name]
       );
 
-      // Aggiungi 5 punti al dichiarante
+      // USER REQUEST: Chi inserisce un evento ne prende 0.5
       await client.query(
-        'UPDATE scores SET total_points = total_points + 3, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
+        'UPDATE scores SET total_points = total_points + 0.5, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
         [evt.declarer_name]
       );
 
@@ -107,8 +111,8 @@ router.post('/', async (req, res) => {
         status: 'confirmed',
         points_awarded: {
           [evt.person_name]: eventPoints,
-          [evt.declarer_name]: 5,
-          [verifier_name]: 2
+          [evt.declarer_name]: 0.5,
+          [verifier_name]: pointsToAward
         }
       });
 
@@ -124,7 +128,7 @@ router.post('/', async (req, res) => {
         message: 'Evento rifiutato',
         status: 'rejected',
         points_awarded: {
-          [verifier_name]: 2
+          [verifier_name]: pointsToAward
         }
       });
 
@@ -136,7 +140,7 @@ router.post('/', async (req, res) => {
         confirmations: evt.confirmations,
         rejections: evt.rejections,
         points_awarded: {
-          [verifier_name]: 2
+          [verifier_name]: pointsToAward
         }
       });
     }
