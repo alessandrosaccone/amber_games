@@ -4,10 +4,16 @@ const multer = require('multer');
 const path = require('path');
 const pool = require('../config/db');
 
+const fs = require('fs');
+
 // Configurazione Multer per upload file
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    const uploadDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -102,7 +108,7 @@ router.post('/', upload.single('media'), async (req, res) => {
 // GET eventi confermati per un utente specifico
 router.get('/user/:userName', async (req, res) => {
   const { userName } = req.params;
-  
+
   try {
     const result = await pool.query(`
       SELECT e.*, 
@@ -117,7 +123,7 @@ router.get('/user/:userName', async (req, res) => {
       WHERE e.person_name = $1 AND e.status = 'confirmed'
       ORDER BY e.created_at DESC
     `, [userName]);
-    
+
     res.json(result.rows);
   } catch (err) {
     console.error(err);
