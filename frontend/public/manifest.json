@@ -1,0 +1,15 @@
+{
+    "short_name": "Amber Games",
+    "name": "Amber Games: Qualità, Passione e Alcol",
+    "icons": [
+        {
+            "src": "amber_games_icon.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#667eea",
+    "background_color": "#0f0f23"
+}
