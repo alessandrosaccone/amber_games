@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import API_BASE_URL from '../config';
 
+import { useNavigate } from 'react-router-dom';
+
 function FloatingAvatars() {
+  const navigate = useNavigate();
   const canvasRef = useRef(null);
   const [avatars, setAvatars] = useState([]);
   const ballsRef = useRef([]);
@@ -24,12 +27,38 @@ function FloatingAvatars() {
     loadAvatars();
   }, []);
 
+  const handleCanvasClick = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Check if clicked on any ball
+    // Iterate in reverse to check top-most balls first
+    for (let i = ballsRef.current.length - 1; i >= 0; i--) {
+      const ball = ballsRef.current[i];
+      const dx = x - (ball.x + ball.size / 2);
+      const dy = y - (ball.y + ball.size / 2);
+
+      // Check distance from center (radius = size / 2)
+      if (dx * dx + dy * dy <= (ball.size / 2) * (ball.size / 2)) {
+        // Clicked!
+        if (ball.img && ball.img.person && ball.img.person.name) {
+          navigate(`/profile/${ball.img.person.name}`);
+        }
+        return; // Only navigate to the top-most avatar
+      }
+    }
+  };
+
   useEffect(() => {
     if (avatars.length === 0) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext('2d');
 
     // Imposta dimensioni canvas
@@ -58,17 +87,19 @@ function FloatingAvatars() {
     avatars.forEach((person) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
-      
+      // Attach person data to image for easy access in click handler
+      img.person = person;
+
       img.onload = () => {
         validImages.push({ img, person });
         checkAllLoaded();
       };
-      
+
       img.onerror = () => {
         console.warn(`Impossibile caricare avatar: ${person.avatar_url}`);
         checkAllLoaded();
       };
-      
+
       // Costruisci URL corretto
       let avatarUrl = person.avatar_url;
 
@@ -116,7 +147,7 @@ function FloatingAvatars() {
       animate();
     };
 
-    
+
     // Animazione
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -196,14 +227,15 @@ function FloatingAvatars() {
   return (
     <canvas
       ref={canvasRef}
+      onClick={handleCanvasClick}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
-        zIndex: -1,
-        pointerEvents: 'none'
+        zIndex: 0,
+        pointerEvents: 'auto'
       }}
     />
   );
