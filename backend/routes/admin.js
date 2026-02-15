@@ -299,4 +299,38 @@ router.get('/people', async (req, res) => {
   }
 });
 
+// GET - Debug info (DB + Filesystem)
+router.get('/debug-all', async (req, res) => {
+  try {
+    const names = await pool.query('SELECT name, avatar_url FROM predefined_names');
+    const events = await pool.query('SELECT id, person_name, media_path, media_type, status FROM events ORDER BY created_at DESC');
+
+    // Check files
+    const uploadsPath = path.join(__dirname, '../uploads');
+    const avatarsPath = path.join(uploadsPath, 'avatars');
+
+    const getFiles = (dir) => {
+      try {
+        if (!fs.existsSync(dir)) return [];
+        return fs.readdirSync(dir).filter(f => fs.statSync(path.join(dir, f)).isFile());
+      } catch (e) {
+        return ['Error reading dir: ' + e.message];
+      }
+    };
+
+    res.json({
+      database: {
+        names: names.rows,
+        events: events.rows
+      },
+      filesystem: {
+        uploads: getFiles(uploadsPath),
+        avatars: getFiles(avatarsPath)
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
