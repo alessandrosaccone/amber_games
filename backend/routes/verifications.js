@@ -97,7 +97,7 @@ router.post('/', async (req, res) => {
       
       // Aggiungi 5 punti al dichiarante
       await client.query(
-        'UPDATE scores SET total_points = total_points + 5, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
+        'UPDATE scores SET total_points = total_points + 2, updated_at = CURRENT_TIMESTAMP WHERE user_name = $1',
         [evt.declarer_name]
       );
       
