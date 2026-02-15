@@ -6,7 +6,6 @@ import VerifyEvent from './components/VerifyEvent';
 import Leaderboard from './components/Leaderboard';
 import AdminLogin from './components/AdminLogin';
 import AdminPanel from './components/AdminPanel';
-import ViewEvents from './components/ViewEvents';
 import UserProfile from './components/UserProfile';
 import './App.css';
 
