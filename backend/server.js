@@ -49,11 +49,33 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+
+// Create uploads directory hierarchy if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+const avatarsDir = path.join(uploadsDir, 'avatars');
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+if (!fs.existsSync(avatarsDir)) {
+  fs.mkdirSync(avatarsDir, { recursive: true });
+}
+
+// Serve uploads folder (contains both event media and avatars)
+app.use('/uploads', express.static(uploadsDir, {
   setHeaders: (res) => {
     res.set('Access-Control-Allow-Origin', '*');
   }
-}));// Serve static files from the React app
+}));
+
+// Compatibility: serve /avatars from backend uploads/avatars
+app.use('/avatars', express.static(avatarsDir, {
+  setHeaders: (res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+  }
+}));
+
+// Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // API Routes

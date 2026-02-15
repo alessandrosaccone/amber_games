@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import API_BASE_URL, { getMediaUrl } from '../config';
 
 function InsertEvent() {
   const navigate = useNavigate();
@@ -116,7 +116,7 @@ function InsertEvent() {
                 </select>
                 {formData.person_name && names.find(n => n.name === formData.person_name)?.avatar_url && (
                   <img
-                    src={names.find(n => n.name === formData.person_name).avatar_url}
+                    src={getMediaUrl(names.find(n => n.name === formData.person_name).avatar_url)}
                     alt="Avatar"
                     style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }}
                   />
@@ -158,7 +158,7 @@ function InsertEvent() {
                 </select>
                 {formData.declarer_name && names.find(n => n.name === formData.declarer_name)?.avatar_url && (
                   <img
-                    src={names.find(n => n.name === formData.declarer_name).avatar_url}
+                    src={getMediaUrl(names.find(n => n.name === formData.declarer_name).avatar_url)}
                     alt="Avatar"
                     style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }}
                   />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import API_BASE_URL, { getMediaUrl } from '../config';
 
 function ViewEvents() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ function ViewEvents() {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/events/user/${encodeURIComponent(userName)}`);
       setEvents(response.data);
-      
+
       // Calcola il totale dei punti
       const total = response.data.reduce((sum, event) => sum + event.event_points, 0);
       setTotalPoints(total);
@@ -46,11 +46,11 @@ function ViewEvents() {
   const handleNameSelect = (e) => {
     const name = e.target.value;
     setSelectedName(name);
-    
+
     // Trova l'avatar della persona selezionata
     const selectedPerson = names.find(n => n.name === name);
     setSelectedAvatar(selectedPerson?.avatar_url || '');
-    
+
     if (name) {
       fetchUserEvents(name);
     } else {
@@ -59,14 +59,12 @@ function ViewEvents() {
     }
   };
 
-  const getMediaUrl = (mediaPath) => {
-    return mediaPath ? `${API_BASE_URL}/uploads/${mediaPath}` : null;
-  };
+  // Rimosso getMediaUrl locale per usare quello globale di config.js
 
   return (
     <div className="container">
-      <button 
-        onClick={() => navigate('/')} 
+      <button
+        onClick={() => navigate('/')}
         className="secondary"
         style={{ marginBottom: '20px' }}
       >
@@ -98,14 +96,15 @@ function ViewEvents() {
               </select>
               {selectedAvatar && (
                 <img
-                  src={selectedAvatar}
+                  src={getMediaUrl(selectedAvatar)}
                   alt="Avatar"
-                  style={{ 
-                    width: '60px', 
-                    height: '60px', 
-                    borderRadius: '50%', 
-                    objectFit: 'contain' 
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    objectFit: 'contain'
                   }}
+                  onError={(e) => e.target.style.display = 'none'}
                 />
               )}
             </div>
@@ -119,9 +118,9 @@ function ViewEvents() {
           {/* Statistiche utente */}
           <div className="card" style={{ marginBottom: '20px', textAlign: 'center' }}>
             <h2 style={{ margin: '0 0 15px 0', fontSize: '1.8rem' }}>{selectedName}</h2>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-around', 
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-around',
               gap: '20px',
               flexWrap: 'wrap'
             }}>
@@ -137,11 +136,11 @@ function ViewEvents() {
                 <p style={{ fontSize: '0.9rem', opacity: 0.7, margin: '0 0 5px 0' }}>
                   Punti Totali
                 </p>
-                <p style={{ 
-                  fontSize: '2rem', 
-                  margin: 0, 
+                <p style={{
+                  fontSize: '2rem',
+                  margin: 0,
                   fontWeight: 'bold',
-                  color: '#4ade80' 
+                  color: '#4ade80'
                 }}>
                   {totalPoints}
                 </p>
@@ -172,25 +171,25 @@ function ViewEvents() {
                   }}
                 >
                   {/* Header evento */}
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     alignItems: 'start',
                     marginBottom: '15px',
                     flexWrap: 'wrap',
                     gap: '10px'
                   }}>
                     <div style={{ flex: 1 }}>
-                      <h3 style={{ 
+                      <h3 style={{
                         margin: '0 0 8px 0',
                         fontSize: '1.3rem',
                         color: '#4ade80'
                       }}>
                         {event.event_type_name}
                       </h3>
-                      <p style={{ 
-                        margin: 0, 
-                        fontSize: '0.9rem', 
+                      <p style={{
+                        margin: 0,
+                        fontSize: '0.9rem',
                         opacity: 0.7,
                         display: 'flex',
                         alignItems: 'center',
@@ -220,8 +219,8 @@ function ViewEvents() {
                       borderRadius: '8px',
                       marginBottom: '15px'
                     }}>
-                      <p style={{ 
-                        margin: 0, 
+                      <p style={{
+                        margin: 0,
                         fontStyle: 'italic',
                         opacity: 0.9,
                         lineHeight: '1.5'
@@ -249,6 +248,8 @@ function ViewEvents() {
                       {event.media_type === 'video' && (
                         <video
                           controls
+                          playsInline
+                          preload="metadata"
                           style={{
                             maxWidth: '100%',
                             borderRadius: '10px',
@@ -256,14 +257,14 @@ function ViewEvents() {
                             border: '2px solid rgba(255, 255, 255, 0.1)'
                           }}
                         >
-                          <source src={getMediaUrl(event.media_path)} />
+                          <source src={getMediaUrl(event.media_path)} type="video/mp4" />
                           Il tuo browser non supporta il tag video.
                         </video>
                       )}
                       {event.media_type === 'audio' && (
                         <audio
                           controls
-                          style={{ 
+                          style={{
                             width: '100%',
                             borderRadius: '10px'
                           }}
@@ -276,11 +277,11 @@ function ViewEvents() {
                   )}
 
                   {/* Footer info */}
-                  <div style={{ 
+                  <div style={{
                     marginTop: '10px',
                     paddingTop: '10px',
                     borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                    fontSize: '0.85rem', 
+                    fontSize: '0.85rem',
                     opacity: 0.6,
                     display: 'flex',
                     justifyContent: 'space-between',

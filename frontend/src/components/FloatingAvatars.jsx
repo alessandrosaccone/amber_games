@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import API_BASE_URL, { getMediaUrl } from '../config';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -100,29 +100,7 @@ function FloatingAvatars() {
         checkAllLoaded();
       };
 
-      // Costruisci URL corretto
-      let avatarUrl = person.avatar_url;
-
-      // Se l'URL inizia con /avatars/, è un asset statico del frontend (in public/avatars).
-      // In questo caso NON dobbiamo aggiungere l'URL del backend, perché in locale
-      // viene servito dal frontend (porta 3000).
-      const isStaticAsset = avatarUrl.startsWith('/avatars/') || avatarUrl.startsWith('avatars/');
-
-      if (!avatarUrl.startsWith('http') && !isStaticAsset) {
-        // In locale (localhost), frontend e backend sono su porte diverse (3000 vs 5000).
-        // Quindi dobbiamo aggiungere l'URL del backend per gli upload.
-        if (API_BASE_URL.includes('localhost')) {
-          avatarUrl = `${API_BASE_URL}${avatarUrl.startsWith('/') ? '' : '/'}${avatarUrl}`;
-        } else {
-          // In produzione (Render Monolith), siamo sullo stesso dominio.
-          // Il backend serve i file statici, quindi va bene il path relativo.
-          if (!avatarUrl.startsWith('/')) {
-            avatarUrl = '/' + avatarUrl;
-          }
-        }
-      }
-
-      img.src = avatarUrl;
+      img.src = getMediaUrl(person.avatar_url);
     });
 
     // Inizializza palline

@@ -12,7 +12,7 @@ const PASSWORD_HASH = '$2b$10$OYRQ8DAkLZEdXfYZgvdTHu0VNvRJFYP/Z25A7IbNSyDJobAIZE
 // Configurazione Multer per avatars
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const avatarDir = path.join(__dirname, '../../frontend/public/avatars');
+    const avatarDir = path.join(__dirname, '../uploads/avatars');
     if (!fs.existsSync(avatarDir)) {
       fs.mkdirSync(avatarDir, { recursive: true });
     }

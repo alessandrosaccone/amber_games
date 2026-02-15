@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import API_BASE_URL, { getMediaUrl } from '../config';
 
 function Leaderboard() {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ function Leaderboard() {
               <div className="podium-position second">
                 {topThree[1].rank}°
               </div>
-              {topThree[1].avatar_url && <img src={topThree[1].avatar_url} alt={topThree[1].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
+              {topThree[1].avatar_url && <img src={getMediaUrl(topThree[1].avatar_url)} alt={topThree[1].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[1].user_name}</div>
               <div className="podium-points">{topThree[1].total_points} pt</div>
             </div>
@@ -77,7 +77,7 @@ function Leaderboard() {
               <div className="podium-position first">
                 {topThree[0].rank}°
               </div>
-              {topThree[0].avatar_url && <img src={topThree[0].avatar_url} alt={topThree[0].user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
+              {topThree[0].avatar_url && <img src={getMediaUrl(topThree[0].avatar_url)} alt={topThree[0].user_name} className="avatar-podium" style={{ width: '100px', height: '100px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[0].user_name}</div>
               <div className="podium-points">{topThree[0].total_points} pt</div>
             </div>
@@ -92,7 +92,7 @@ function Leaderboard() {
               <div className="podium-position third">
                 {topThree[2].rank}°
               </div>
-              {topThree[2].avatar_url && <img src={topThree[2].avatar_url} alt={topThree[2].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
+              {topThree[2].avatar_url && <img src={getMediaUrl(topThree[2].avatar_url)} alt={topThree[2].user_name} className="avatar-podium" style={{ width: '80px', height: '80px', margin: '5px auto', display: 'block', borderRadius: '50%', objectFit: 'contain' }} />}
               <div className="podium-name">{topThree[2].user_name}</div>
               <div className="podium-points">{topThree[2].total_points} pt</div>
             </div>
@@ -111,7 +111,7 @@ function Leaderboard() {
             >
               <span className="leaderboard-rank">{score.rank}°</span>
               <div className="leaderboard-user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-                {score.avatar_url && <img src={score.avatar_url} alt={score.user_name} className="avatar-list" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }} />}
+                {score.avatar_url && <img src={getMediaUrl(score.avatar_url)} alt={score.user_name} className="avatar-list" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'contain' }} />}
                 <span className="leaderboard-name">{score.user_name}</span>
               </div>
               <span className="leaderboard-points">{score.total_points} pt</span>
