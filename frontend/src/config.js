@@ -12,8 +12,14 @@ export const getMediaUrl = (path) => {
     // In sviluppo aggiungiamo il dominio backend, in produzione (monolith) usiamo path relativi
     const baseUrl = API_BASE_URL.includes('localhost') ? API_BASE_URL : '';
 
-    // Se il path ha già il prefisso corretto (uploads/ o avatars/), lo usiamo
-    if (cleanPath.startsWith('uploads/') || cleanPath.startsWith('avatars/')) {
+    // Se il path inizia con 'avatars/', è un asset statico del frontend (in public/avatars)
+    // Quindi ritorniamo un path relativo (che in locale punta a localhost:3000, in prod allo stesso dominio)
+    if (cleanPath.startsWith('avatars/')) {
+        return `/${cleanPath}`;
+    }
+
+    // Se è un upload (starts with 'uploads/'), usiamo il server backend
+    if (cleanPath.startsWith('uploads/')) {
         return `${baseUrl}/${cleanPath}`;
     }
 

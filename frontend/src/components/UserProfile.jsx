@@ -10,30 +10,39 @@ function UserProfile() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [userAvatar, setUserAvatar] = useState(null);
+
     useEffect(() => {
-        fetchUserEvents();
+        const loadData = async () => {
+            setLoading(true);
+            try {
+                // 1. Fetch Events
+                const eventsRes = await axios.get(`${API_BASE_URL}/api/events/user/${userName}`);
+                setEvents(eventsRes.data);
+
+                // 2. Fetch User Details (Avatar/Name) - fallback if no events or to get correct avatar
+                // Since we don't have a specific user endpoint, we get all names and find ours
+                const namesRes = await axios.get(`${API_BASE_URL}/api/events/names`);
+                const user = namesRes.data.find(u => u.name === userName);
+
+                if (eventsRes.data.length > 0) {
+                    setUserAvatar(eventsRes.data[0].person_avatar);
+                } else if (user) {
+                    setUserAvatar(user.avatar_url);
+                }
+
+            } catch (err) {
+                console.error('Errore caricamento dati:', err);
+                setError('Impossibile caricare il profilo.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
     }, [userName]);
-
-    const fetchUserEvents = async () => {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/api/events/user/${userName}`);
-            setEvents(response.data);
-            setLoading(false);
-        } catch (err) {
-            console.error('Errore nel caricamento degli eventi:', err);
-            setError('Impossibile caricare il profilo utente.');
-            setLoading(false);
-        }
-    };
-
-    if (loading) return <div className="container"><div className="loading">Caricamento profilo...</div></div>;
 
     // Calculate total points
     const totalPoints = events.reduce((sum, event) => sum + (event.event_points || 0), 0);
-
-    // Get avatar from the first event (if available) or use a placeholder
-    // In a real app, you might have a dedicated user endpoint, but here we can try to infer it from events
-    const userAvatar = events.length > 0 ? events[0].person_avatar : null;
 
     return (
         <div className="container">
